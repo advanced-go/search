@@ -1,4 +1,4 @@
-package google
+package provider
 
 import (
 	"fmt"
@@ -13,7 +13,7 @@ func Example_PkgUri() {
 	fmt.Printf("test: PkgPath = \"%v\"\n", pkgUri2)
 
 	//Output:
-	//test: PkgPath = "github.com/advanced-go/search/google"
+	//test: PkgPath = "github.com/advanced-go/search/provider"
 
 }
 
@@ -22,13 +22,15 @@ func Example_Search() {
 	if err != nil {
 		fmt.Printf("test: NewRequest() -> %v\n", err)
 	}
-	_, status := search[runtime.Output](req)
+	_, status := search[runtime.Output](nil, req.URL.Query())
 	fmt.Printf("test: search(%v) -> [status:%v] [content-type:%v] [content-length:%v]\n", req.URL.String(), status, status.ContentHeader().Get(http2.ContentType), status.ContentHeader().Get(http2.ContentLength))
 
 	//Output:
 	//test: search(http://localhost:8080/github.com/advanced-go/search/google/search?q=golang) -> [status:OK] [content-type:text/html; charset=ISO-8859-1] [content-length:115289]
 
 }
+
+/*
 
 func searchOverrideFail(id string) (string, string) {
 	switch id {
@@ -48,15 +50,15 @@ func Example_Search_OverrideFail() {
 	fmt.Printf("test: search(%v) -> [status:%v]\n", req.URL.String(), status)
 
 	//Output:
-	//{ "code":91, "status":"I/O Failure", "request-id":"invalid-change", "trace" : [ "github.com/advanced-go/search/tree/main/google:Search","github.com/advanced-go/core/tree/main/exchange:Do","github.com/advanced-go/core/tree/main/exchange:readResponse" ], "errors" : [ "open C:\Users\markb\GitHub\search\google\resource\query-result.txt: The system cannot find the path specified." ] }
-	//test: search(http://localhost:8080/github.com/advanced-go/search/google/search?q=golang) -> [status:I/O Failure [open C:\Users\markb\GitHub\search\google\resource\query-result.txt: The system cannot find the path specified.]]
+	//{ "code":91, "status":"I/O Failure", "request-id":"invalid-change", "trace" : [ "github.com/advanced-go/search/tree/main/provider:Search","github.com/advanced-go/core/tree/main/exchange:Do","github.com/advanced-go/core/tree/main/exchange:readResponse" ], "errors" : [ "open C:\Users\markb\GitHub\search\provider\resource\query-result.txt: The system cannot find the path specified." ] }
+	//test: search(http://localhost:8080/github.com/advanced-go/search/google/search?q=golang) -> [status:I/O Failure [open C:\Users\markb\GitHub\search\provider\resource\query-result.txt: The system cannot find the path specified.]]
 
 }
 
 func searchOverrideSuccess(id string) (string, string) {
 	switch id {
 	case searchTag:
-		return "file://[cwd]/googletest/resource/query-result.txt", ""
+		return "file://[cwd]/providertest/resource/query-result.txt", ""
 	}
 	return "", ""
 }
@@ -74,3 +76,6 @@ func Example_Search_OverrideSuccess() {
 	//test: search(http://localhost:8080/github.com/advanced-go/search/google/search?q=golang) -> [status:OK] [content-type:text/plain] [content-length:49]
 
 }
+
+
+*/

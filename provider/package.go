@@ -1,4 +1,4 @@
-package google
+package provider
 
 import (
 	"fmt"
@@ -14,7 +14,7 @@ type pkg struct{}
 // http://localhost:8080/search?q=golang
 
 const (
-	PkgPath        = "github.com/advanced-go/search/google"
+	PkgPath        = "github.com/advanced-go/search/provider"
 	searchLocation = PkgPath + ":Search"
 
 	repZero = "search"
@@ -33,9 +33,9 @@ func search[E runtime.ErrorHandler](h http.Header, values url.Values) ([]byte, r
 		return nil, runtime.NewStatus(http.StatusBadRequest)
 	}
 	var e E
-	//requestId := "invalid-change"
+
 	h = runtime.AddRequestId(h)
-	newUrl := resolver.Build(searchTag, values)
+	newUrl := resolver.Build(searchTag, searchPath, newValues(values).Encode())
 	req, err := http.NewRequest(http.MethodGet, newUrl, nil)
 	if err != nil {
 		return nil, e.Handle(runtime.NewStatusError(http.StatusInternalServerError, searchLocation, err), runtime.RequestId(h), "")

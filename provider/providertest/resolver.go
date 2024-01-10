@@ -1,4 +1,4 @@
-package googletest
+package providertest
 
 import (
 	"strings"

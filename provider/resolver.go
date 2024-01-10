@@ -1,4 +1,4 @@
-package google
+package provider
 
 import (
 	"encoding/json"
@@ -6,12 +6,21 @@ import (
 	"fmt"
 	"github.com/advanced-go/core/runtime"
 	uri2 "github.com/advanced-go/core/uri"
+	"net/url"
 	"os"
 )
 
+// DEBUG : https://search.yahoo.com/search?p=golang
+// TEST  : https://www.bing.com/search?q=C+Language
+// STAGE : https://www.google.com/search?q=C%2B%2B
+// PROD  : https://duckduckgo.com/?q=Pascal
+
 const (
-	searchTag  = "search"
-	searchPath = "/search"
+	searchTag       = "{SEARCH}"
+	defaultPath     = "/search?%v"
+	duckPath        = "/?%v"
+	defaultQueryArg = "q"
+	yahooQueryArg   = "p"
 
 	debugPath = "file://[cwd]/resource/authorities-debug.json"
 	testPath  = "file://[cwd]/resource/authorities-test.json"
@@ -20,11 +29,10 @@ const (
 )
 
 var (
-	resolver       = uri2.NewResolver()
-	testAuthority  []uri2.Attr
-	stageAuthority []uri2.Attr
-	prodAuthority  []uri2.Attr
-	initError      error
+	resolver   = uri2.NewResolver()
+	initError  error
+	searchPath = defaultPath
+	queryArg   = defaultQueryArg
 )
 
 func init() {
@@ -32,29 +40,27 @@ func init() {
 	if !ok {
 		return
 	}
+	// Debug has a different query arg
+	queryArg = yahooQueryArg
 	resolver.SetAuthorities(debug)
-
-	testAuthority, ok = initAuthorities(testPath)
-	if !ok {
-		return
-	}
-	stageAuthority, ok = initAuthorities(stagePath)
-	if !ok {
-		return
-	}
-	prodAuthority, ok = initAuthorities(prodPath)
 }
 
 func initResolver() error {
 	var ok bool
 	var attrs []uri2.Attr
 
+	if initError != nil {
+		return initError
+	}
+	queryArg = defaultQueryArg
 	if runtime.IsTestEnvironment() {
 		attrs, ok = initAuthorities(testPath)
 	} else {
 		if runtime.IsStageEnvironment() {
 			attrs, ok = initAuthorities(stagePath)
 		} else {
+			// production has no path
+			searchPath = duckPath
 			attrs, ok = initAuthorities(prodPath)
 		}
 	}
@@ -83,4 +89,19 @@ func initAuthorities(path string) ([]uri2.Attr, bool) {
 		return nil, false
 	}
 	return authorities, true
+}
+
+func newValues(values url.Values) url.Values {
+	if values == nil {
+		values = make(url.Values)
+		values.Add(queryArg, "")
+		return values
+	}
+	if queryArg == defaultQueryArg {
+		return values
+	}
+	q := values.Get(defaultQueryArg)
+	values.Del(defaultQueryArg)
+	values.Set(queryArg, q)
+	return values
 }
