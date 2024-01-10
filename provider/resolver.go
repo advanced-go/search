@@ -1,14 +1,19 @@
 package provider
 
 import (
+	"embed"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/advanced-go/core/runtime"
 	uri2 "github.com/advanced-go/core/uri"
+	"io/fs"
 	"net/url"
 	"os"
 )
+
+//go:embed resource/*
+var f embed.FS
 
 // DEBUG : https://search.yahoo.com/search?p=golang
 // TEST  : https://www.bing.com/search?q=C+Language
@@ -22,10 +27,15 @@ const (
 	defaultQueryArg = "q"
 	yahooQueryArg   = "p"
 
-	debugPath = "file://[cwd]/resource/authorities-debug.json"
-	testPath  = "file://[cwd]/resource/authorities-test.json"
-	stagePath = "file://[cwd]/resource/authorities-stage.json"
-	prodPath  = "file://[cwd]/resource/authorities-prod.json"
+	//debugPath = "file://[cwd]/resource/authorities-debug.json"
+	//testPath  = "file://[cwd]/resource/authorities-test.json"
+	//stagePath = "file://[cwd]/resource/authorities-stage.json"
+	//prodPath  = "file://[cwd]/resource/authorities-prod.json"
+
+	debugPath = "resource/authorities-debug.json"
+	testPath  = "resource/authorities-test.json"
+	stagePath = "resource/authorities-stage.json"
+	prodPath  = "resource/authorities-prod.json"
 )
 
 var (
@@ -70,11 +80,22 @@ func initResolver() error {
 	return initError
 }
 
-func readAuthorities(path string) ([]uri2.Attr, error) {
+func readAuthoritiesFile(path string) ([]uri2.Attr, error) {
 	var attrs []uri2.Attr
 
 	fname := uri2.FileName(path)
 	buf, err := os.ReadFile(fname)
+	if err != nil {
+		return nil, err
+	}
+	err = json.Unmarshal(buf, &attrs)
+	return attrs, err
+}
+
+func readAuthorities(path string) ([]uri2.Attr, error) {
+	var attrs []uri2.Attr
+
+	buf, err := fs.ReadFile(f, path)
 	if err != nil {
 		return nil, err
 	}
