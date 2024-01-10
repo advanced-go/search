@@ -1,4 +1,4 @@
-package provider
+package service
 
 import (
 	"fmt"
@@ -24,12 +24,7 @@ func messageHandler(msg messaging.Message) {
 	start := time.Now()
 	switch msg.Event {
 	case messaging.StartupEvent:
-		status := runtime.NewStatusOK().SetDuration(time.Since(start))
-		err := initResolver()
-		if err != nil {
-			status = runtime.NewStatusError(runtime.StatusIOError, searchLocation, err).SetDuration(time.Since(start))
-		}
-		messaging.SendReply(msg, status)
+		messaging.SendReply(msg, runtime.NewStatusOK().SetDuration(time.Since(start)))
 	case messaging.ShutdownEvent:
 	case messaging.PingEvent:
 		messaging.SendReply(msg, runtime.NewStatusOK().SetDuration(time.Since(start)))
