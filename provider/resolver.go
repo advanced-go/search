@@ -59,7 +59,7 @@ func initResolver() error {
 	var ok bool
 	var attrs []uri2.Attr
 
-	if initError != nil {
+	if initError != nil || runtime.IsDebugEnvironment() {
 		return initError
 	}
 	queryArg = defaultQueryArg

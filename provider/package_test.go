@@ -76,5 +76,5 @@ func Example_HttpHandler() {
 	//test: HttpHandler() -> [status-code:400]
 	//test: HttpHandler() -> [status-code:400] [content:error invalid URI, path is not valid: /invalid-path:search]
 	//test: HttpHandler() -> [status-code:404] [content:error invalid URI, resource was not found: [searchBad]]
-	
+
 }
