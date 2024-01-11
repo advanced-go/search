@@ -4,13 +4,19 @@ import (
 	"fmt"
 	"github.com/advanced-go/core/http2"
 	"github.com/advanced-go/core/runtime"
+	uri2 "github.com/advanced-go/core/uri"
 	"net/http"
+	"net/http/httptest"
 	"reflect"
 )
 
+const (
+	resultUri = "file://[cwd]/providertest/resource/query-result.txt"
+)
+
 func Example_PkgUri() {
-	pkgUri2 := reflect.TypeOf(any(pkg{})).PkgPath()
-	fmt.Printf("test: PkgPath = \"%v\"\n", pkgUri2)
+	pkgUri := reflect.TypeOf(any(pkg{})).PkgPath()
+	fmt.Printf("test: PkgPath = \"%v\"\n", pkgUri)
 
 	//Output:
 	//test: PkgPath = "github.com/advanced-go/search/provider"
@@ -18,7 +24,7 @@ func Example_PkgUri() {
 }
 
 func Example_Search() {
-	req, err := http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+PkgPath+"/search?q=golang", nil)
+	req, err := http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+PkgPath+":search?q=golang", nil)
 	if err != nil {
 		fmt.Printf("test: NewRequest() -> %v\n", err)
 	}
@@ -26,56 +32,49 @@ func Example_Search() {
 	fmt.Printf("test: search(%v) -> [status:%v] [content-type:%v] [content-length:%v]\n", req.URL.String(), status, status.ContentHeader().Get(http2.ContentType), status.ContentHeader().Get(http2.ContentLength))
 
 	//Output:
-	//test: search(http://localhost:8080/github.com/advanced-go/search/google/search?q=golang) -> [status:OK] [content-type:text/html; charset=ISO-8859-1] [content-length:115289]
+	//test: search(http://localhost:8080/github.com/advanced-go/search/provider:search?q=golang) -> [status:OK] [content-type:text/html; charset=ISO-8859-1] [content-length:115289]
 
 }
 
-/*
-
-func searchOverrideFail(id string) (string, string) {
-	switch id {
-	case searchTag:
-		return "file://[cwd]/resource/query-result.txt", ""
-	}
-	return "", ""
-}
-
-func Example_Search_OverrideFail() {
-	resolver.SetOverride(searchOverrideFail, "")
-	req, err := http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+PkgPath+"/search?q=golang", nil)
+func Example_Search_Override() {
+	resolver.SetOverrides([]uri2.Attr{{searchTag, resultUri}})
+	req, err := http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+PkgPath+":search?q=golang", nil)
 	if err != nil {
 		fmt.Printf("test: NewRequest() -> %v\n", err)
 	}
-	_, status := search[runtime.Output](req)
-	fmt.Printf("test: search(%v) -> [status:%v]\n", req.URL.String(), status)
+	r, status := search[runtime.Output](nil, req.URL.Query())
+	buf, _ := runtime.NewBytes(r)
+	s := string(buf)
+	s = s[:len(s)-2]
+	fmt.Printf("test: search(%v) -> [status:%v] [content:%v] [content-type:%v] [content-length:%v]\n", req.URL.String(), status, s, status.ContentHeader().Get(http2.ContentType), status.ContentHeader().Get(http2.ContentLength))
 
 	//Output:
-	//{ "code":91, "status":"I/O Failure", "request-id":"invalid-change", "trace" : [ "github.com/advanced-go/search/tree/main/provider:Search","github.com/advanced-go/core/tree/main/exchange:Do","github.com/advanced-go/core/tree/main/exchange:readResponse" ], "errors" : [ "open C:\Users\markb\GitHub\search\provider\resource\query-result.txt: The system cannot find the path specified." ] }
-	//test: search(http://localhost:8080/github.com/advanced-go/search/google/search?q=golang) -> [status:I/O Failure [open C:\Users\markb\GitHub\search\provider\resource\query-result.txt: The system cannot find the path specified.]]
+	//test: search(http://localhost:8080/github.com/advanced-go/search/provider:search?q=golang) -> [status:OK] [content:This is an alternate result for a Google query.] [content-type:text/plain] [content-length:49]
 
 }
 
-func searchOverrideSuccess(id string) (string, string) {
-	switch id {
-	case searchTag:
-		return "file://[cwd]/providertest/resource/query-result.txt", ""
-	}
-	return "", ""
-}
+func Example_HttpHandler() {
+	resolver.SetOverrides([]uri2.Attr{{searchTag, resultUri}})
+	rec := httptest.NewRecorder()
 
-func Example_Search_OverrideSuccess() {
-	resolver.SetOverride(searchOverrideSuccess, "")
-	req, err := http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+PkgPath+"/search?q=golang", nil)
-	if err != nil {
-		fmt.Printf("test: NewRequest() -> %v\n", err)
-	}
-	_, status := search[runtime.Output](req)
-	fmt.Printf("test: search(%v) -> [status:%v] [content-type:%v] [content-length:%v]\n", req.URL.String(), status, status.ContentHeader().Get(http2.ContentType), status.ContentHeader().Get(http2.ContentLength))
+	HttpHandler(rec, nil)
+	fmt.Printf("test: HttpHandler() -> [status-code:%v]\n", rec.Result().StatusCode)
+
+	req, _ := http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+"invalid-path"+":search?q=golang", nil)
+	rec = httptest.NewRecorder()
+	HttpHandler(rec, req)
+	buf, _ := runtime.New[[]byte](rec.Result())
+	fmt.Printf("test: HttpHandler() -> [status-code:%v] [content:%v]\n", rec.Result().StatusCode, string(buf))
+
+	req, _ = http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+PkgPath+":searchBad?q=golang", nil)
+	rec = httptest.NewRecorder()
+	HttpHandler(rec, req)
+	buf, _ = runtime.New[[]byte](rec.Result())
+	fmt.Printf("test: HttpHandler() -> [status-code:%v] [content:%v]\n", rec.Result().StatusCode, string(buf))
 
 	//Output:
-	//test: search(http://localhost:8080/github.com/advanced-go/search/google/search?q=golang) -> [status:OK] [content-type:text/plain] [content-length:49]
-
+	//test: HttpHandler() -> [status-code:400]
+	//test: HttpHandler() -> [status-code:400] [content:error invalid URI, path is not valid: /invalid-path:search]
+	//test: HttpHandler() -> [status-code:404] [content:error invalid URI, resource was not found: [searchBad]]
+	
 }
-
-
-*/

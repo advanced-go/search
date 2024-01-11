@@ -1,12 +1,15 @@
 package provider
 
 import (
+	"errors"
 	"fmt"
 	"github.com/advanced-go/core/exchange"
 	"github.com/advanced-go/core/http2"
 	"github.com/advanced-go/core/runtime"
+	"github.com/advanced-go/core/uri"
 	"net/http"
 	"net/url"
+	"strings"
 )
 
 type pkg struct{}
@@ -15,17 +18,32 @@ type pkg struct{}
 
 const (
 	PkgPath        = "github.com/advanced-go/search/provider"
-	searchLocation = PkgPath + ":Search"
-
-	repZero = "search"
-	repOne  = "http://localhost:8080/search"
-	real    = "http://www.google.com/search"
+	searchLocation = PkgPath + ":search"
+	searchResource = "search"
 )
 
-// Search - search handler
-// Uses : https://www.google.com/search
-func Search(h http.Header, values url.Values) ([]byte, runtime.Status) {
-	return search[runtime.Log](h, values)
+// HttpHandler - HTTP handler endpoint
+func HttpHandler(w http.ResponseWriter, r *http.Request) {
+	if r == nil {
+		http2.WriteResponse[runtime.Log](w, nil, runtime.NewStatus(http.StatusBadRequest), nil)
+		return
+	}
+	nid, rsc, ok := uri.UprootUrn(r.URL.Path)
+	if !ok || nid != PkgPath {
+		status := runtime.NewStatusWithContent(http.StatusBadRequest, errors.New(fmt.Sprintf("error invalid URI, path is not valid: %v", r.URL.Path)), false)
+		http2.WriteResponse[runtime.Log](w, nil, status, nil)
+		return
+	}
+	runtime.AddRequestId(r)
+	switch strings.ToLower(rsc) {
+	case searchResource:
+		buf, status := search[runtime.Log](r.Header, r.URL.Query())
+		http2.WriteResponse[runtime.Log](w, buf, status, status.ContentHeader())
+	default:
+		status := runtime.NewStatusWithContent(http.StatusNotFound, errors.New(fmt.Sprintf("error invalid URI, resource was not found: [%v]", rsc)), false)
+		http2.WriteResponse[runtime.Log](w, nil, status, nil)
+	}
+
 }
 
 func search[E runtime.ErrorHandler](h http.Header, values url.Values) ([]byte, runtime.Status) {
@@ -34,7 +52,6 @@ func search[E runtime.ErrorHandler](h http.Header, values url.Values) ([]byte, r
 	}
 	var e E
 
-	h = runtime.AddRequestId(h)
 	newUrl := resolver.Build(searchTag, searchPath, newValues(values).Encode())
 	req, err := http.NewRequest(http.MethodGet, newUrl, nil)
 	if err != nil {
