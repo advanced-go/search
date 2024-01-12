@@ -51,41 +51,41 @@ func init() {
 
 func initResolver() error {
 	var ok bool
-	var attrs []uri2.KV
+	var pairs []runtime.Pair
 
 	if initError != nil || runtime.IsDebugEnvironment() {
 		return initError
 	}
 	queryArg = defaultQueryArg
 	if runtime.IsTestEnvironment() {
-		attrs, ok = initAuthorities(testPath)
+		pairs, ok = initAuthorities(testPath)
 	} else {
 		if runtime.IsStageEnvironment() {
-			attrs, ok = initAuthorities(stagePath)
+			pairs, ok = initAuthorities(stagePath)
 		} else {
 			// production has no path
 			searchPath = duckPath
-			attrs, ok = initAuthorities(prodPath)
+			pairs, ok = initAuthorities(prodPath)
 		}
 	}
 	if ok {
-		resolver.SetAuthorities(attrs)
+		resolver.SetAuthorities(pairs)
 	}
 	return initError
 }
 
-func readAuthorities(path string) ([]uri2.KV, error) {
-	var attrs []uri2.KV
+func readAuthorities(path string) ([]runtime.Pair, error) {
+	var pairs []runtime.Pair
 
 	buf, err := fs.ReadFile(f, path)
 	if err != nil {
 		return nil, err
 	}
-	err = json.Unmarshal(buf, &attrs)
-	return attrs, err
+	err = json.Unmarshal(buf, &pairs)
+	return pairs, err
 }
 
-func initAuthorities(path string) ([]uri2.KV, bool) {
+func initAuthorities(path string) ([]runtime.Pair, bool) {
 	authorities, err := readAuthorities(path)
 	if err != nil {
 		initError = errors.New(fmt.Sprintf("%v : %v", err, path))

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/advanced-go/core/http2"
 	"github.com/advanced-go/core/runtime"
-	uri2 "github.com/advanced-go/core/uri"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -37,7 +36,7 @@ func Example_Search() {
 }
 
 func Example_Search_Override() {
-	resolver.SetOverrides([]uri2.KV{{searchTag, resultUri}})
+	resolver.SetOverrides([]runtime.Pair{{searchTag, resultUri}})
 	req, err := http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+PkgPath+":search?q=golang", nil)
 	if err != nil {
 		fmt.Printf("test: NewRequest() -> %v\n", err)
@@ -54,7 +53,7 @@ func Example_Search_Override() {
 }
 
 func Example_HttpHandler() {
-	resolver.SetOverrides([]uri2.KV{{searchTag, resultUri}})
+	resolver.SetOverrides([]runtime.Pair{{searchTag, resultUri}})
 	rec := httptest.NewRecorder()
 
 	HttpHandler(rec, nil)
