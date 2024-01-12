@@ -52,7 +52,7 @@ func Example_Override() {
 	uri := resolver.Build(searchTag, searchPath, v.Encode())
 	fmt.Printf("test: resolver.Build(\"%v\") -> [uri:%v]\n", searchTag, uri)
 
-	resolver.SetOverrides([]uri2.Attr{{searchTag, "https://www.google.com/search?q=Pascal"}})
+	resolver.SetOverrides([]uri2.KV{{searchTag, "https://www.google.com/search?q=Pascal"}})
 	s := v.Encode()
 	uri = resolver.Build(searchTag, searchPath, s)
 	fmt.Printf("test: resolver.Build(\"%v\") -> [uri:%v]\n", searchTag, uri)

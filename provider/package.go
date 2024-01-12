@@ -43,7 +43,6 @@ func HttpHandler(w http.ResponseWriter, r *http.Request) {
 		status := runtime.NewStatusWithContent(http.StatusNotFound, errors.New(fmt.Sprintf("error invalid URI, resource was not found: [%v]", rsc)), false)
 		http2.WriteResponse[runtime.Log](w, nil, status, nil)
 	}
-
 }
 
 func search[E runtime.ErrorHandler](h http.Header, values url.Values) ([]byte, runtime.Status) {
@@ -53,12 +52,7 @@ func search[E runtime.ErrorHandler](h http.Header, values url.Values) ([]byte, r
 	var e E
 
 	newUrl := resolver.Build(searchTag, searchPath, newValues(values).Encode())
-	req, err := http.NewRequest(http.MethodGet, newUrl, nil)
-	if err != nil {
-		return nil, e.Handle(runtime.NewStatusError(http.StatusInternalServerError, searchLocation, err), runtime.RequestId(h), "")
-	}
-	// exchange.Do() will always return a non nil *http.Response
-	resp, status := exchange.Do(req)
+	resp, status := exchange.Get(newUrl, h)
 	if !status.OK() {
 		return nil, e.Handle(status, runtime.RequestId(h), searchLocation)
 	}

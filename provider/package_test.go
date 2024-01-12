@@ -37,7 +37,7 @@ func Example_Search() {
 }
 
 func Example_Search_Override() {
-	resolver.SetOverrides([]uri2.Attr{{searchTag, resultUri}})
+	resolver.SetOverrides([]uri2.KV{{searchTag, resultUri}})
 	req, err := http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+PkgPath+":search?q=golang", nil)
 	if err != nil {
 		fmt.Printf("test: NewRequest() -> %v\n", err)
@@ -54,7 +54,7 @@ func Example_Search_Override() {
 }
 
 func Example_HttpHandler() {
-	resolver.SetOverrides([]uri2.Attr{{searchTag, resultUri}})
+	resolver.SetOverrides([]uri2.KV{{searchTag, resultUri}})
 	rec := httptest.NewRecorder()
 
 	HttpHandler(rec, nil)

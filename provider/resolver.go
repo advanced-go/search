@@ -9,7 +9,6 @@ import (
 	uri2 "github.com/advanced-go/core/uri"
 	"io/fs"
 	"net/url"
-	"os"
 )
 
 //go:embed resource/*
@@ -26,11 +25,6 @@ const (
 	duckPath        = "/?%v"
 	defaultQueryArg = "q"
 	yahooQueryArg   = "p"
-
-	//debugPath = "file://[cwd]/resource/authorities-debug.json"
-	//testPath  = "file://[cwd]/resource/authorities-test.json"
-	//stagePath = "file://[cwd]/resource/authorities-stage.json"
-	//prodPath  = "file://[cwd]/resource/authorities-prod.json"
 
 	debugPath = "resource/authorities-debug.json"
 	testPath  = "resource/authorities-test.json"
@@ -57,7 +51,7 @@ func init() {
 
 func initResolver() error {
 	var ok bool
-	var attrs []uri2.Attr
+	var attrs []uri2.KV
 
 	if initError != nil || runtime.IsDebugEnvironment() {
 		return initError
@@ -80,20 +74,8 @@ func initResolver() error {
 	return initError
 }
 
-func readAuthoritiesFile(path string) ([]uri2.Attr, error) {
-	var attrs []uri2.Attr
-
-	fname := uri2.FileName(path)
-	buf, err := os.ReadFile(fname)
-	if err != nil {
-		return nil, err
-	}
-	err = json.Unmarshal(buf, &attrs)
-	return attrs, err
-}
-
-func readAuthorities(path string) ([]uri2.Attr, error) {
-	var attrs []uri2.Attr
+func readAuthorities(path string) ([]uri2.KV, error) {
+	var attrs []uri2.KV
 
 	buf, err := fs.ReadFile(f, path)
 	if err != nil {
@@ -103,7 +85,7 @@ func readAuthorities(path string) ([]uri2.Attr, error) {
 	return attrs, err
 }
 
-func initAuthorities(path string) ([]uri2.Attr, bool) {
+func initAuthorities(path string) ([]uri2.KV, bool) {
 	authorities, err := readAuthorities(path)
 	if err != nil {
 		initError = errors.New(fmt.Sprintf("%v : %v", err, path))
