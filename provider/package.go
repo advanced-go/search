@@ -6,7 +6,6 @@ import (
 	"github.com/advanced-go/core/exchange"
 	"github.com/advanced-go/core/http2"
 	"github.com/advanced-go/core/runtime"
-	"github.com/advanced-go/core/uri"
 	"net/http"
 	"net/url"
 	"strings"
@@ -24,23 +23,18 @@ const (
 
 // HttpHandler - HTTP handler endpoint
 func HttpHandler(w http.ResponseWriter, r *http.Request) {
-	if r == nil {
-		http2.WriteResponse[runtime.Log](w, nil, runtime.NewStatus(http.StatusBadRequest), nil)
-		return
-	}
-	nid, rsc, ok := uri.UprootUrn(r.URL.Path)
-	if !ok || nid != PkgPath {
-		status := runtime.NewStatusWithContent(http.StatusBadRequest, errors.New(fmt.Sprintf("error invalid URI, path is not valid: %v", r.URL.Path)), false)
-		http2.WriteResponse[runtime.Log](w, nil, status, nil)
+	path, status0 := http2.ValidateRequest(r, PkgPath)
+	if !status0.OK() {
+		http2.WriteResponse[runtime.Log](w, nil, status0, nil)
 		return
 	}
 	runtime.AddRequestId(r)
-	switch strings.ToLower(rsc) {
+	switch strings.ToLower(path) {
 	case searchResource:
 		buf, status := search[runtime.Log](r.Header, r.URL.Query())
 		http2.WriteResponse[runtime.Log](w, buf, status, status.ContentHeader())
 	default:
-		status := runtime.NewStatusWithContent(http.StatusNotFound, errors.New(fmt.Sprintf("error invalid URI, resource was not found: [%v]", rsc)), false)
+		status := runtime.NewStatusWithContent(http.StatusNotFound, errors.New(fmt.Sprintf("error invalid URI, resource was not found: [%v]", path)), false)
 		http2.WriteResponse[runtime.Log](w, nil, status, nil)
 	}
 }
