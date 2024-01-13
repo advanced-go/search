@@ -27,7 +27,7 @@ func Example_Search() {
 	if err != nil {
 		fmt.Printf("test: NewRequest() -> %v\n", err)
 	}
-	_, status := search[runtime.Output](nil, req.URL.Query())
+	_, status := Search[runtime.Output](nil, req.URL.Query())
 	fmt.Printf("test: search(%v) -> [status:%v] [content-type:%v] [content-length:%v]\n", req.URL.String(), status, status.ContentHeader().Get(http2.ContentType), status.ContentHeader().Get(http2.ContentLength))
 
 	//Output:
@@ -41,7 +41,7 @@ func Example_Search_Override() {
 	if err != nil {
 		fmt.Printf("test: NewRequest() -> %v\n", err)
 	}
-	r, status := search[runtime.Output](nil, req.URL.Query())
+	r, status := Search[runtime.Output](nil, req.URL.Query())
 	buf, _ := runtime.NewBytes(r)
 	s := string(buf)
 	s = s[:len(s)-2]
@@ -72,8 +72,8 @@ func Example_HttpHandler() {
 	fmt.Printf("test: HttpHandler() -> [status-code:%v] [content:%v]\n", rec.Result().StatusCode, string(buf))
 
 	//Output:
-	//test: HttpHandler() -> [status-code:400]
-	//test: HttpHandler() -> [status-code:400] [content:error invalid URI, path is not valid: /invalid-path:search]
+	//test: HttpHandler() -> [status-code:500]
+	//test: HttpHandler() -> [status-code:400] [content:error invalid URI, NID does not match: "/invalid-path:search" "github.com/advanced-go/search/provider"]
 	//test: HttpHandler() -> [status-code:404] [content:error invalid URI, resource was not found: [searchBad]]
 
 }

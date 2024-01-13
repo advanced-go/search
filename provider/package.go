@@ -31,7 +31,7 @@ func HttpHandler(w http.ResponseWriter, r *http.Request) {
 	runtime.AddRequestId(r)
 	switch strings.ToLower(path) {
 	case searchResource:
-		buf, status := search[runtime.Log](r.Header, r.URL.Query())
+		buf, status := Search[runtime.Log](r.Header, r.URL.Query())
 		http2.WriteResponse[runtime.Log](w, buf, status, status.ContentHeader())
 	default:
 		status := runtime.NewStatusWithContent(http.StatusNotFound, errors.New(fmt.Sprintf("error invalid URI, resource was not found: [%v]", path)), false)
@@ -39,7 +39,7 @@ func HttpHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func search[E runtime.ErrorHandler](h http.Header, values url.Values) ([]byte, runtime.Status) {
+func Search[E runtime.ErrorHandler](h http.Header, values url.Values) ([]byte, runtime.Status) {
 	if values == nil {
 		return nil, runtime.NewStatus(http.StatusBadRequest)
 	}
