@@ -13,12 +13,10 @@ import (
 
 type pkg struct{}
 
-// http://localhost:8080/search?q=golang
-
 const (
-	PkgPath        = "github.com/advanced-go/search/provider"
+	PkgPath = "github.com/advanced-go/search/provider"
+
 	searchLocation = PkgPath + ":search"
-	searchResource = "search"
 )
 
 // HttpHandler - HTTP handler endpoint
@@ -45,7 +43,7 @@ func Search[E runtime.ErrorHandler](h http.Header, values url.Values) ([]byte, r
 	}
 	var e E
 
-	newUrl := resolver.Build(searchTag, searchPath, newValues(values).Encode())
+	newUrl := resolver.Build(searchPath, values.Encode())
 	resp, status := exchange.Get(newUrl, h)
 	if !status.OK() {
 		return nil, e.Handle(status, runtime.RequestId(h), searchLocation)

@@ -36,7 +36,7 @@ func Example_Search() {
 }
 
 func Example_Search_Override() {
-	resolver.SetOverrides([]runtime.Pair{{searchTag, resultUri}})
+	resolver.SetOverrides([]runtime.Pair{{searchPath, resultUri}})
 	req, err := http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+PkgPath+":search?q=golang", nil)
 	if err != nil {
 		fmt.Printf("test: NewRequest() -> %v\n", err)
@@ -53,7 +53,7 @@ func Example_Search_Override() {
 }
 
 func Example_HttpHandler() {
-	resolver.SetOverrides([]runtime.Pair{{searchTag, resultUri}})
+	resolver.SetOverrides([]runtime.Pair{{searchPath, resultUri}})
 	rec := httptest.NewRecorder()
 
 	HttpHandler(rec, nil)

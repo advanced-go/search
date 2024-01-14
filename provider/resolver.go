@@ -1,79 +1,34 @@
 package provider
 
 import (
-	"embed"
-	"encoding/json"
-	"errors"
-	"fmt"
 	"github.com/advanced-go/core/runtime"
 	uri2 "github.com/advanced-go/core/uri"
-	"io/fs"
-	"net/url"
 )
 
+/*
 //go:embed resource/*
 var f embed.FS
-
+*/
+// http://localhost:8080/search?q=golang
 // DEBUG : https://search.yahoo.com/search?p=golang
 // TEST  : https://www.bing.com/search?q=C+Language
 // STAGE : https://www.google.com/search?q=C%2B%2B
 // PROD  : https://duckduckgo.com/?q=Pascal
 
 const (
-	searchTag       = "{SEARCH}"
-	defaultPath     = "/search?%v"
-	duckPath        = "/?%v"
-	defaultQueryArg = "q"
-	yahooQueryArg   = "p"
-
-	debugPath = "resource/authorities-debug.json"
-	testPath  = "resource/authorities-test.json"
-	stagePath = "resource/authorities-stage.json"
-	prodPath  = "resource/authorities-prod.json"
+	searchPath     = "/search?%v"
+	searchResource = "search"
 )
 
 var (
-	resolver   = uri2.NewResolver()
-	initError  error
-	searchPath = defaultPath
-	queryArg   = defaultQueryArg
+	resolver = uri2.NewResolver()
 )
 
 func init() {
-	debug, ok := initAuthorities(debugPath)
-	if !ok {
-		return
-	}
-	// Debug has a different query arg
-	queryArg = yahooQueryArg
-	resolver.SetAuthorities(debug)
+	resolver.SetOverrides([]runtime.Pair{{searchPath, "https://www.google.com/search?%v"}})
 }
 
-func initResolver() error {
-	var ok bool
-	var pairs []runtime.Pair
-
-	if initError != nil || runtime.IsDebugEnvironment() {
-		return initError
-	}
-	queryArg = defaultQueryArg
-	if runtime.IsTestEnvironment() {
-		pairs, ok = initAuthorities(testPath)
-	} else {
-		if runtime.IsStageEnvironment() {
-			pairs, ok = initAuthorities(stagePath)
-		} else {
-			// production has no path
-			searchPath = duckPath
-			pairs, ok = initAuthorities(prodPath)
-		}
-	}
-	if ok {
-		resolver.SetAuthorities(pairs)
-	}
-	return initError
-}
-
+/*
 func readAuthorities(path string) ([]runtime.Pair, error) {
 	var pairs []runtime.Pair
 
@@ -83,15 +38,6 @@ func readAuthorities(path string) ([]runtime.Pair, error) {
 	}
 	err = json.Unmarshal(buf, &pairs)
 	return pairs, err
-}
-
-func initAuthorities(path string) ([]runtime.Pair, bool) {
-	authorities, err := readAuthorities(path)
-	if err != nil {
-		initError = errors.New(fmt.Sprintf("%v : %v", err, path))
-		return nil, false
-	}
-	return authorities, true
 }
 
 func newValues(values url.Values) url.Values {
@@ -108,3 +54,6 @@ func newValues(values url.Values) url.Values {
 	values.Set(queryArg, q)
 	return values
 }
+
+
+*/

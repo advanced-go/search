@@ -25,10 +25,6 @@ func messageHandler(msg messaging.Message) {
 	switch msg.Event {
 	case messaging.StartupEvent:
 		status := runtime.NewStatusOK().SetDuration(time.Since(start))
-		err := initResolver()
-		if err != nil {
-			status = runtime.NewStatusError(runtime.StatusIOError, searchLocation, err).SetDuration(time.Since(start))
-		}
 		messaging.SendReply(msg, status)
 	case messaging.ShutdownEvent:
 	case messaging.PingEvent:
