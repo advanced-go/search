@@ -43,6 +43,7 @@ func Search[E runtime.ErrorHandler](h http.Header, values url.Values) ([]byte, r
 	}
 	var e E
 
+	return []byte("this is a search result"), runtime.StatusOK()
 	newUrl := resolver.Build(searchPath, values.Encode())
 	resp, status := exchange.Get(newUrl, h)
 	if !status.OK() {

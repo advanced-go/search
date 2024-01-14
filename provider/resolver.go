@@ -26,6 +26,7 @@ var (
 
 func init() {
 	resolver.SetOverrides([]runtime.Pair{{searchPath, "https://www.google.com/search?%v"}})
+	//resolver.SetOverrides([]runtime.Pair{{searchPath, "https://search.yahoo.com/search?%v"}})
 }
 
 /*

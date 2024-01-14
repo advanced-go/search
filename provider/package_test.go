@@ -27,7 +27,10 @@ func Example_Search() {
 	if err != nil {
 		fmt.Printf("test: NewRequest() -> %v\n", err)
 	}
-	_, status := Search[runtime.Output](nil, req.URL.Query())
+	buf, status := Search[runtime.Output](nil, req.URL.Query())
+	s := string(buf)
+	if len(s) > 0 {
+	}
 	fmt.Printf("test: search(%v) -> [status:%v] [content-type:%v] [content-length:%v]\n", req.URL.String(), status, status.ContentHeader().Get(http2.ContentType), status.ContentHeader().Get(http2.ContentLength))
 
 	//Output:
