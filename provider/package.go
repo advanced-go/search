@@ -14,7 +14,7 @@ import (
 type pkg struct{}
 
 const (
-	PkgPath = "github.com/advanced-go/search/provider"
+	PkgPath = "github/advanced-go/search/provider"
 
 	searchLocation = PkgPath + ":search"
 )

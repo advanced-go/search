@@ -7,18 +7,20 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"reflect"
+	"strings"
 )
 
 const (
 	resultUri = "file://[cwd]/providertest/resource/query-result.txt"
 )
 
-func Example_PkgUri() {
-	pkgUri := reflect.TypeOf(any(pkg{})).PkgPath()
-	fmt.Printf("test: PkgPath = \"%v\"\n", pkgUri)
+func Example_PkgPath() {
+	dotCom := ".com"
+	pkgPath := reflect.TypeOf(any(pkg{})).PkgPath()
+	fmt.Printf("test: PkgPath = \"%v\"\n", strings.Replace(pkgPath, dotCom, "", len(dotCom)))
 
 	//Output:
-	//test: PkgPath = "github.com/advanced-go/search/provider"
+	//test: PkgPath = "github/advanced-go/search/provider"
 
 }
 
@@ -34,7 +36,7 @@ func Example_Search() {
 	fmt.Printf("test: search(%v) -> [status:%v] [content-type:%v] [content-length:%v]\n", req.URL.String(), status, status.ContentHeader().Get(http2.ContentType), status.ContentHeader().Get(http2.ContentLength))
 
 	//Output:
-	//test: search(http://localhost:8080/github.com/advanced-go/search/provider:search?q=golang) -> [status:OK] [content-type:text/html; charset=ISO-8859-1] [content-length:115289]
+	//test: search(http://localhost:8080/github/advanced-go/search/provider:search?q=golang) -> [status:OK] [content-type:text/html; charset=ISO-8859-1] [content-length:115289]
 
 }
 
@@ -51,7 +53,7 @@ func Example_Search_Override() {
 	fmt.Printf("test: search(%v) -> [status:%v] [content:%v] [content-type:%v] [content-length:%v]\n", req.URL.String(), status, s, status.ContentHeader().Get(http2.ContentType), status.ContentHeader().Get(http2.ContentLength))
 
 	//Output:
-	//test: search(http://localhost:8080/github.com/advanced-go/search/provider:search?q=golang) -> [status:OK] [content:This is an alternate result for a Google query.] [content-type:text/plain] [content-length:49]
+	//test: search(http://localhost:8080/github/advanced-go/search/provider:search?q=golang) -> [status:OK] [content:This is an alternate result for a Google query.] [content-type:text/plain] [content-length:49]
 
 }
 
@@ -76,7 +78,7 @@ func Example_HttpHandler() {
 
 	//Output:
 	//test: HttpHandler() -> [status-code:500]
-	//test: HttpHandler() -> [status-code:400] [content:error invalid URI, NID does not match: "/invalid-path:search" "github.com/advanced-go/search/provider"]
+	//test: HttpHandler() -> [status-code:400] [content:error invalid URI, NID does not match: "/invalid-path:search" "github/advanced-go/search/provider"]
 	//test: HttpHandler() -> [status-code:404] [content:error invalid URI, resource was not found: [searchBad]]
 
 }
