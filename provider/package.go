@@ -45,6 +45,7 @@ func Search[E runtime.ErrorHandler](h http.Header, values url.Values) ([]byte, r
 
 	//return []byte("this is a search result"), runtime.StatusOK()
 	newUrl := resolver.Build(searchPath, values.Encode())
+	newUrl = "https://search.yahoo.com/search?p=golang"
 	resp, status := exchange.Get(newUrl, h)
 	if !status.OK() {
 		return nil, e.Handle(status, runtime.RequestId(h), searchLocation)
