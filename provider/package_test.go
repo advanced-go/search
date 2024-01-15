@@ -25,6 +25,7 @@ func Example_PkgPath() {
 }
 
 func Example_Search() {
+	resolver.SetOverrides([]runtime.Pair{{searchPath, "https://www.google.com/search?q=golang"}})
 	req, err := http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+PkgPath+":search?q=golang", nil)
 	if err != nil {
 		fmt.Printf("test: NewRequest() -> %v\n", err)
@@ -80,5 +81,19 @@ func Example_HttpHandler() {
 	//test: HttpHandler() -> [status-code:500]
 	//test: HttpHandler() -> [status-code:400] [content:error invalid URI, NID does not match: "/invalid-path:search" "github/advanced-go/search/provider"]
 	//test: HttpHandler() -> [status-code:404] [content:error invalid URI, resource was not found: [searchBad]]
+
+}
+
+func ExampleHttpHandler_Search() {
+	resolver.SetOverrides([]runtime.Pair{{searchPath, "https://www.google.com/search?q=golang"}})
+	rec := httptest.NewRecorder()
+	req, _ := http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+PkgPath+":search?q=golang", nil)
+
+	HttpHandler(rec, req)
+	//_, _ := runtime.New[[]byte](rec.Result())
+	fmt.Printf("test: HttpHandler() -> [status-code:%v]\n", rec.Result().StatusCode)
+
+	//Output:
+	//test: HttpHandler() -> [status-code:200]
 
 }
