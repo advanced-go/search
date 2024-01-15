@@ -55,7 +55,10 @@ func Search[E runtime.ErrorHandler](h http.Header, values url.Values) ([]byte, r
 		return nil, e.Handle(status, runtime.RequestId(h), searchLocation)
 	}
 	status = runtime.NewStatusOK()
-	status.ContentHeader().Set(http2.ContentType, resp.Header.Get(http2.ContentType))
-	status.ContentHeader().Set(http2.ContentLength, fmt.Sprintf("%v", len(buf)))
+	for name, _ := range resp.Header {
+		status.ContentHeader().Add(name, resp.Header.Get(name))
+	}
+	//status.ContentHeader().Set(http2.ContentType, resp.Header.Get(http2.ContentType))
+	//status.ContentHeader().Set(http2.ContentLength, fmt.Sprintf("%v", len(buf)))
 	return buf, status
 }
