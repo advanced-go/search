@@ -3,6 +3,7 @@ package provider
 import (
 	"errors"
 	"fmt"
+	"github.com/advanced-go/core/exchange"
 	"github.com/advanced-go/core/http2"
 	"github.com/advanced-go/core/runtime"
 	"net/http"
@@ -28,7 +29,7 @@ func HttpHandler(w http.ResponseWriter, r *http.Request) {
 	runtime.AddRequestId(r)
 	switch strings.ToLower(path) {
 	case searchResource:
-		buf, status := Search[runtime.Log](r.Header, r.URL.Query())
+		buf, status := Search[runtime.Log](r.Header, r.URL.Query(), false)
 		if !status.OK() {
 			http2.WriteResponse[runtime.Log](w, nil, status, nil)
 		} else {
@@ -40,27 +41,29 @@ func HttpHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func Search[E runtime.ErrorHandler](h http.Header, values url.Values) ([]byte, runtime.Status) {
+func Search[E runtime.ErrorHandler](h http.Header, values url.Values, override bool) ([]byte, runtime.Status) {
 	if values == nil {
 		return nil, runtime.NewStatus(http.StatusBadRequest)
 	}
-	//var e E
-	/*
-		newUrl := resolver.Build(searchPath, values.Encode())
-		resp, status := exchange.Get(newUrl, h)
-		if !status.OK() {
-			return nil, e.Handle(status, runtime.RequestId(h), searchLocation)
-		}
-		var buf []byte
-		buf, status = runtime.NewBytes(resp)
-		if !status.OK() {
-			return nil, e.Handle(status, runtime.RequestId(h), searchLocation)
-		}
-	*/
-	status := runtime.NewStatusOK()
-	//for name, _ := range resp.Header {
-	//	status.ContentHeader().Add(name, resp.Header.Get(name))
-	//}
+	var e E
+
+	newUrl := resolver.Build(searchPath, values.Encode())
+	resp, status := exchange.Get(newUrl, h)
+	if !status.OK() {
+		return nil, e.Handle(status, runtime.RequestId(h), searchLocation)
+	}
+	var buf []byte
+	buf, status = runtime.NewBytes(resp)
+	if buf == nil || !status.OK() {
+		return nil, e.Handle(status, runtime.RequestId(h), searchLocation)
+	}
+	if !override {
+		status1 := runtime.NewStatusOK()
+		status1.ContentHeader().Add(http2.ContentType, resp.Header.Get(http2.ContentType))
+		status1.ContentHeader().Add(http2.ContentLength, fmt.Sprintf("%v", len(buf)))
+		return buf, status1
+	}
+	status = runtime.NewStatusOK()
 	status.ContentHeader().Add(http2.ContentType, "text/html")
 	status.ContentHeader().Add(http2.ContentType, "charset=ISO-8859-1")
 	//status.ContentHeader().Add(http2.ContentType,resp.Header.Get(http2.ContentType))

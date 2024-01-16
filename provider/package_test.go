@@ -30,7 +30,7 @@ func Example_Search() {
 	if err != nil {
 		fmt.Printf("test: NewRequest() -> %v\n", err)
 	}
-	buf, status := Search[runtime.Output](nil, req.URL.Query())
+	buf, status := Search[runtime.Output](nil, req.URL.Query(), false)
 	s := string(buf)
 	if len(s) > 0 {
 	}
@@ -41,13 +41,13 @@ func Example_Search() {
 
 }
 
-func _Example_Search_Override() {
+func Example_Search_Override() {
 	resolver.SetOverrides([]runtime.Pair{{searchPath, resultUri}})
 	req, err := http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+PkgPath+":search?q=golang", nil)
 	if err != nil {
 		fmt.Printf("test: NewRequest() -> %v\n", err)
 	}
-	r, status := Search[runtime.Output](nil, req.URL.Query())
+	r, status := Search[runtime.Output](nil, req.URL.Query(), false)
 	buf, _ := runtime.NewBytes(r)
 	s := string(buf)
 	s = s[:len(s)-2]

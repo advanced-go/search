@@ -23,14 +23,14 @@ const (
 )
 
 var (
-	resolver = uri2.NewResolver()
-	results  []byte
-	err      error
+	resolver   = uri2.NewResolver()
+	results    []byte
+	resultsErr error
 )
 
 func init() {
 	resolver.SetOverrides([]runtime.Pair{{searchPath, "https://www.google.com/search?%v"}})
-	results, err = fs.ReadFile(f, resultsPath)
+	results, resultsErr = fs.ReadFile(f, resultsPath)
 }
 
 /*
