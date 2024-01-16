@@ -92,7 +92,7 @@ func ExampleHttpHandler_Search() {
 	resolver.SetOverrides([]runtime.Pair{{searchPath, "https://www.google.com/search?q=golang"}})
 	rec := httptest.NewRecorder()
 	req, _ := http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+PkgPath+":search?q=golang", nil)
-
+	req.Header.Add("Accept-Encoding", "gzip")
 	HttpHandler(rec, req)
 	buf, status := runtime.ReadAll(rec.Result().Body)
 	s := string(buf)

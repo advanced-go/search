@@ -26,6 +26,7 @@ func HttpHandler(w http.ResponseWriter, r *http.Request) {
 		http2.WriteResponse[runtime.Log](w, nil, status0, nil)
 		return
 	}
+	//fmt.Printf("request header accept-encoding : %v\n",r.)
 	runtime.AddRequestId(r)
 	switch strings.ToLower(path) {
 	case searchResource:
@@ -33,6 +34,9 @@ func HttpHandler(w http.ResponseWriter, r *http.Request) {
 		if !status.OK() {
 			http2.WriteResponse[runtime.Log](w, nil, status, nil)
 		} else {
+			if r.Header.Get("Accept-Encoding") == "gzip" {
+				status.ContentHeader().Add("Content-Encoding", "gzip")
+			}
 			http2.WriteResponse[runtime.Log](w, buf, status, status.ContentHeader())
 		}
 	default:
