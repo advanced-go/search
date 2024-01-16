@@ -29,7 +29,7 @@ func HttpHandler(w http.ResponseWriter, r *http.Request) {
 	runtime.AddRequestId(r)
 	switch strings.ToLower(path) {
 	case searchResource:
-		buf, status := Search[runtime.Log](r.Header, r.URL.Query(), false)
+		buf, status := Search[runtime.Log](r.Header, r.URL.Query(), true)
 		if !status.OK() {
 			http2.WriteResponse[runtime.Log](w, nil, status, nil)
 		} else {
@@ -62,7 +62,7 @@ func Search[E runtime.ErrorHandler](h http.Header, values url.Values, override b
 		//status1 := runtime.NewStatusOK()
 		//status1.ContentHeader().Add(http2.ContentType, resp.Header.Get(http2.ContentType))
 		//status1.ContentHeader().Add(http2.ContentLength, fmt.Sprintf("%v", len(buf)))
-		return buf, status
+		return resultsSLO, status
 	}
 	//status.ContentHeader().Add(http2.ContentType, "text/html")
 	//status.ContentHeader().Add(http2.ContentType, "charset=ISO-8859-1")
