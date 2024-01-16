@@ -34,7 +34,7 @@ func Example_Search() {
 	s := string(buf)
 	if len(s) > 0 {
 	}
-	fmt.Printf("test: search(%v) -> [status:%v] [content-type:%v] [content-length:%v]\n", req.URL.String(), status, status.ContentHeader().Get(http2.ContentType), status.ContentHeader().Get(http2.ContentLength))
+	fmt.Printf("test: search(%v) -> [status:%v] [content-type:%v] [string-length:%v] [byte-length:%v]\n", req.URL.String(), status, status.ContentHeader().Get(http2.ContentType), len(s), len(buf))
 
 	//Output:
 	//test: search(http://localhost:8080/github/advanced-go/search/provider:search?q=golang) -> [status:OK] [content-type:text/html; charset=ISO-8859-1] [content-length:115289]

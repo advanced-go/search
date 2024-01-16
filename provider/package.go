@@ -57,16 +57,16 @@ func Search[E runtime.ErrorHandler](h http.Header, values url.Values, override b
 	if buf == nil || !status.OK() {
 		return nil, e.Handle(status, runtime.RequestId(h), searchLocation)
 	}
-	if !override {
-		status1 := runtime.NewStatusOK()
-		status1.ContentHeader().Add(http2.ContentType, resp.Header.Get(http2.ContentType))
-		//status1.ContentHeader().Add(http2.ContentLength, fmt.Sprintf("%v", len(buf)))
-		return resultsSLO, status1
-	}
 	status = runtime.NewStatusOK()
-	status.ContentHeader().Add(http2.ContentType, "text/html")
-	status.ContentHeader().Add(http2.ContentType, "charset=ISO-8859-1")
+	if !override {
+		//status1 := runtime.NewStatusOK()
+		//status1.ContentHeader().Add(http2.ContentType, resp.Header.Get(http2.ContentType))
+		//status1.ContentHeader().Add(http2.ContentLength, fmt.Sprintf("%v", len(buf)))
+		return buf, status
+	}
+	//status.ContentHeader().Add(http2.ContentType, "text/html")
+	//status.ContentHeader().Add(http2.ContentType, "charset=ISO-8859-1")
 	//status.ContentHeader().Add(http2.ContentType,resp.Header.Get(http2.ContentType))
-	status.ContentHeader().Set(http2.ContentLength, fmt.Sprintf("%v", len(resultsGolang)))
-	return resultsGolang, status
+	//status.ContentHeader().Set(http2.ContentLength, fmt.Sprintf("%v", len(resultsGolang)))
+	return resultsSLO, status
 }
