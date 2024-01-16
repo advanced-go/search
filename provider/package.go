@@ -26,7 +26,7 @@ func HttpHandler(w http.ResponseWriter, r *http.Request) {
 		http2.WriteResponse[runtime.Log](w, nil, status0, nil)
 		return
 	}
-	//fmt.Printf("request header accept-encoding : %v\n",r.)
+	fmt.Printf("request header accept-encoding : %v\n", r.Header.Get("Accept-Encoding"))
 	runtime.AddRequestId(r)
 	switch strings.ToLower(path) {
 	case searchResource:
@@ -34,9 +34,9 @@ func HttpHandler(w http.ResponseWriter, r *http.Request) {
 		if !status.OK() {
 			http2.WriteResponse[runtime.Log](w, nil, status, nil)
 		} else {
-			if r.Header.Get("Accept-Encoding") == "gzip" {
-				status.ContentHeader().Add("Content-Encoding", "gzip")
-			}
+			//if r.Header.Get("Accept-Encoding") == "gzip" {
+			//	status.ContentHeader().Add("Content-Encoding", "gzip")
+			//}
 			http2.WriteResponse[runtime.Log](w, buf, status, status.ContentHeader())
 		}
 	default:
@@ -52,7 +52,7 @@ func Search[E runtime.ErrorHandler](h http.Header, values url.Values, override b
 	var e E
 
 	newUrl := resolver.Build(searchPath, values.Encode())
-	resp, status := exchange.Get(newUrl, h)
+	resp, status := exchange.Get(newUrl, nil)
 	if !status.OK() {
 		return nil, e.Handle(status, runtime.RequestId(h), searchLocation)
 	}
