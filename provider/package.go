@@ -53,7 +53,7 @@ func Search[E runtime.ErrorHandler](h http.Header, values url.Values, override b
 		return nil, e.Handle(status, runtime.RequestId(h), searchLocation)
 	}
 	var buf []byte
-	buf, status = runtime.NewBytes(resp.Body)
+	buf, status = runtime.ReadAll(resp.Body)
 	if buf == nil || !status.OK() {
 		return nil, e.Handle(status, runtime.RequestId(h), searchLocation)
 	}

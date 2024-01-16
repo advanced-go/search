@@ -47,8 +47,8 @@ func Example_Search_Override() {
 	if err != nil {
 		fmt.Printf("test: NewRequest() -> %v\n", err)
 	}
-	r, status := Search[runtime.Output](nil, req.URL.Query(), false)
-	buf, _ := runtime.NewBytes(r)
+	buf, status := Search[runtime.Output](nil, req.URL.Query(), false)
+	//buf, _ := runtime.NewBytes(r)
 	s := string(buf)
 	s = s[:len(s)-2]
 	fmt.Printf("test: search(%v) -> [status:%v] [content:%v] [content-type:%v] [content-length:%v]\n", req.URL.String(), status, s, status.ContentHeader().Get(http2.ContentType), status.ContentHeader().Get(http2.ContentLength))
