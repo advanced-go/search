@@ -53,15 +53,15 @@ func Search[E runtime.ErrorHandler](h http.Header, values url.Values, override b
 		return nil, e.Handle(status, runtime.RequestId(h), searchLocation)
 	}
 	var buf []byte
-	buf, status = runtime.NewBytes(resp)
+	buf, status = runtime.NewBytes(resp.Body)
 	if buf == nil || !status.OK() {
 		return nil, e.Handle(status, runtime.RequestId(h), searchLocation)
 	}
 	if !override {
 		status1 := runtime.NewStatusOK()
 		status1.ContentHeader().Add(http2.ContentType, resp.Header.Get(http2.ContentType))
-		status1.ContentHeader().Add(http2.ContentLength, fmt.Sprintf("%v", len(results)))
-		return results, status1
+		status1.ContentHeader().Add(http2.ContentLength, fmt.Sprintf("%v", len(buf)))
+		return buf, status1
 	}
 	status = runtime.NewStatusOK()
 	status.ContentHeader().Add(http2.ContentType, "text/html")
