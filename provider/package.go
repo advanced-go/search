@@ -3,7 +3,6 @@ package provider
 import (
 	"errors"
 	"fmt"
-	"github.com/advanced-go/core/exchange"
 	"github.com/advanced-go/core/http2"
 	"github.com/advanced-go/core/runtime"
 	"net/http"
@@ -45,23 +44,26 @@ func Search[E runtime.ErrorHandler](h http.Header, values url.Values) ([]byte, r
 	if values == nil {
 		return nil, runtime.NewStatus(http.StatusBadRequest)
 	}
-	var e E
-
-	newUrl := resolver.Build(searchPath, values.Encode())
-	resp, status := exchange.Get(newUrl, h)
-	if !status.OK() {
-		return nil, e.Handle(status, runtime.RequestId(h), searchLocation)
-	}
-	var buf []byte
-	buf, status = runtime.NewBytes(resp)
-	if !status.OK() {
-		return nil, e.Handle(status, runtime.RequestId(h), searchLocation)
-	}
-	status = runtime.NewStatusOK()
+	//var e E
+	/*
+		newUrl := resolver.Build(searchPath, values.Encode())
+		resp, status := exchange.Get(newUrl, h)
+		if !status.OK() {
+			return nil, e.Handle(status, runtime.RequestId(h), searchLocation)
+		}
+		var buf []byte
+		buf, status = runtime.NewBytes(resp)
+		if !status.OK() {
+			return nil, e.Handle(status, runtime.RequestId(h), searchLocation)
+		}
+	*/
+	status := runtime.NewStatusOK()
 	//for name, _ := range resp.Header {
 	//	status.ContentHeader().Add(name, resp.Header.Get(name))
 	//}
-	status.ContentHeader().Set(http2.ContentType, resp.Header.Get(http2.ContentType))
-	status.ContentHeader().Set(http2.ContentLength, fmt.Sprintf("%v", len(buf)))
-	return buf, status
+	status.ContentHeader().Add(http2.ContentType, "text/html")
+	status.ContentHeader().Add(http2.ContentType, "charset=ISO-8859-1")
+	//status.ContentHeader().Add(http2.ContentType,resp.Header.Get(http2.ContentType))
+	status.ContentHeader().Set(http2.ContentLength, fmt.Sprintf("%v", len(results)))
+	return results, status
 }

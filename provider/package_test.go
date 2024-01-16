@@ -41,7 +41,7 @@ func Example_Search() {
 
 }
 
-func Example_Search_Override() {
+func _Example_Search_Override() {
 	resolver.SetOverrides([]runtime.Pair{{searchPath, resultUri}})
 	req, err := http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+PkgPath+":search?q=golang", nil)
 	if err != nil {

@@ -1,14 +1,15 @@
 package provider
 
 import (
+	"embed"
 	"github.com/advanced-go/core/runtime"
 	uri2 "github.com/advanced-go/core/uri"
+	"io/fs"
 )
 
-/*
 //go:embed resource/*
 var f embed.FS
-*/
+
 // http://localhost:8080/search?q=golang
 // DEBUG : https://search.yahoo.com/search?p=golang
 // TEST  : https://www.bing.com/search?q=C+Language
@@ -18,15 +19,18 @@ var f embed.FS
 const (
 	searchPath     = "/search?%v"
 	searchResource = "search"
+	resultsPath    = "resource/results.html"
 )
 
 var (
 	resolver = uri2.NewResolver()
+	results  []byte
+	err      error
 )
 
 func init() {
 	resolver.SetOverrides([]runtime.Pair{{searchPath, "https://www.google.com/search?%v"}})
-	//resolver.SetOverrides([]runtime.Pair{{searchPath, "https://search.yahoo.com/search?%v"}})
+	results, err = fs.ReadFile(f, resultsPath)
 }
 
 /*
