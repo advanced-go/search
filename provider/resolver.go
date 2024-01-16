@@ -1,18 +1,15 @@
 package provider
 
 import (
-	"bytes"
-	"compress/gzip"
-	"embed"
-	"fmt"
 	"github.com/advanced-go/core/runtime"
 	uri2 "github.com/advanced-go/core/uri"
-	"io"
-	"io/fs"
 )
 
+/*
 //go:embed resource/*
 var f embed.FS
+
+*/
 
 // http://localhost:8080/search?q=golang
 // DEBUG : https://search.yahoo.com/search?p=golang
@@ -23,26 +20,29 @@ var f embed.FS
 const (
 	searchPath     = "/search?%v"
 	searchResource = "search"
-	resultsPath    = "resource/results.html"
+)
+
+var (
+	resolver = uri2.NewResolver()
+)
+
+func init() {
+	resolver.SetOverrides([]runtime.Pair{{searchPath, "https://www.google.com/search?%v"}})
+}
+
+/*
+resultsPath    = "resource/results.html"
 	sloPath        = "resource/query-slo.html"
 	winPath        = "resource/q-golang-2.html"
 	unixPath       = "resource/q-golang-1.html"
 	corruptPath    = "resource/q-golang-corrupt.html"
-)
-
-var (
-	resolver       = uri2.NewResolver()
-	resultsGolang  []byte
+resultsGolang  []byte
 	resultsSLO     []byte
 	resultsWin     []byte
 	resultsUnix    []byte
 	resultsCorrupt []byte
 	resultsErr     error
-)
-
-func init() {
-	resolver.SetOverrides([]runtime.Pair{{searchPath, "https://www.google.com/search?%v"}})
-	resultsGolang, resultsErr = fs.ReadFile(f, resultsPath)
+resultsGolang, resultsErr = fs.ReadFile(f, resultsPath)
 	resultsSLO, resultsErr = fs.ReadFile(f, sloPath)
 	resultsWin, resultsErr = fs.ReadFile(f, winPath)
 	resultsUnix, resultsErr = fs.ReadFile(f, unixPath)
@@ -50,7 +50,8 @@ func init() {
 	if resultsErr != nil {
 		fmt.Printf("results error: %v\n", resultsErr)
 	}
-	r := bytes.NewReader(resultsCorrupt)
+
+r := bytes.NewReader(resultsCorrupt)
 	zr, err := gzip.NewReader(r)
 	if err != nil {
 		fmt.Printf("gzip error: %v\n", err)
@@ -65,10 +66,6 @@ func init() {
 	if len(s) > 0 {
 
 	}
-
-}
-
-/*
 func readAuthorities(path string) ([]runtime.Pair, error) {
 	var pairs []runtime.Pair
 

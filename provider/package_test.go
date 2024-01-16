@@ -30,7 +30,7 @@ func Example_Search() {
 	if err != nil {
 		fmt.Printf("test: NewRequest() -> %v\n", err)
 	}
-	buf, status := Search[runtime.Output](nil, req.URL.Query(), false)
+	buf, status := Search[runtime.Output](nil, req.URL.Query())
 	s := string(buf)
 	if len(s) > 0 {
 	}
@@ -38,7 +38,7 @@ func Example_Search() {
 	//if err != nil {
 	//	fmt.Printf("test: os.WriteFile() -> [err:%v]\n", err)
 	//}
-	fmt.Printf("test: search(%v) -> [status:%v] [content-type:%v] [string-length:%v] [byte-length:%v]\n", req.URL.String(), status, status.ContentHeader().Get(http2.ContentType), len(s), len(buf))
+	fmt.Printf("test: search(%v) -> [status:%v] [content-type:%v] [content-length:%v]\n", req.URL.String(), status, status.ContentHeader().Get(http2.ContentType), len(buf))
 
 	//Output:
 	//test: search(http://localhost:8080/github/advanced-go/search/provider:search?q=golang) -> [status:OK] [content-type:text/html; charset=ISO-8859-1] [content-length:115289]
@@ -51,14 +51,14 @@ func Example_Search_Override() {
 	if err != nil {
 		fmt.Printf("test: NewRequest() -> %v\n", err)
 	}
-	buf, status := Search[runtime.Output](nil, req.URL.Query(), false)
+	buf, status := Search[runtime.Output](nil, req.URL.Query())
 	//buf, _ := runtime.NewBytes(r)
 	s := string(buf)
 	s = s[:len(s)-2]
 	fmt.Printf("test: search(%v) -> [status:%v] [content:%v] [content-type:%v] [content-length:%v]\n", req.URL.String(), status, s, status.ContentHeader().Get(http2.ContentType), status.ContentHeader().Get(http2.ContentLength))
 
 	//Output:
-	//test: search(http://localhost:8080/github/advanced-go/search/provider:search?q=golang) -> [status:OK] [content:This is an alternate result for a Google query.] [content-type:text/plain] [content-length:49]
+	//test: search(http://localhost:8080/github/advanced-go/search/provider:search?q=golang) -> [status:OK] [content:This is an alternate result for a Google query.] [content-type:text/plain] [content-length:]
 
 }
 
@@ -102,6 +102,6 @@ func ExampleHttpHandler_Search() {
 	fmt.Printf("test: HttpHandler() -> [status-code:%v] [read-all:%v]\n", rec.Result().StatusCode, status)
 
 	//Output:
-	//test: HttpHandler() -> [status-code:200]
-
+	//test: HttpHandler() -> [status-code:200] [read-all:OK]
+	
 }
