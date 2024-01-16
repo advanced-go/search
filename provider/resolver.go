@@ -1,9 +1,13 @@
 package provider
 
 import (
+	"bytes"
+	"compress/gzip"
 	"embed"
+	"fmt"
 	"github.com/advanced-go/core/runtime"
 	uri2 "github.com/advanced-go/core/uri"
+	"io"
 	"io/fs"
 )
 
@@ -23,15 +27,17 @@ const (
 	sloPath        = "resource/query-slo.html"
 	winPath        = "resource/q-golang-2.html"
 	unixPath       = "resource/q-golang-1.html"
+	corruptPath    = "resource/q-golang-corrupt.html"
 )
 
 var (
-	resolver      = uri2.NewResolver()
-	resultsGolang []byte
-	resultsSLO    []byte
-	resultsWin    []byte
-	resultsUnix   []byte
-	resultsErr    error
+	resolver       = uri2.NewResolver()
+	resultsGolang  []byte
+	resultsSLO     []byte
+	resultsWin     []byte
+	resultsUnix    []byte
+	resultsCorrupt []byte
+	resultsErr     error
 )
 
 func init() {
@@ -40,6 +46,26 @@ func init() {
 	resultsSLO, resultsErr = fs.ReadFile(f, sloPath)
 	resultsWin, resultsErr = fs.ReadFile(f, winPath)
 	resultsUnix, resultsErr = fs.ReadFile(f, unixPath)
+	resultsCorrupt, resultsErr = fs.ReadFile(f, corruptPath)
+	if resultsErr != nil {
+		fmt.Printf("results error: %v\n", resultsErr)
+	}
+	r := bytes.NewReader(resultsCorrupt)
+	zr, err := gzip.NewReader(r)
+	if err != nil {
+		fmt.Printf("gzip error: %v\n", err)
+		return
+	}
+	buf, status := runtime.ReadAll(io.NopCloser(zr))
+	if !status.OK() {
+		fmt.Printf("gzip read error: %v\n", status)
+		return
+	}
+	s := string(buf)
+	if len(s) > 0 {
+
+	}
+
 }
 
 /*

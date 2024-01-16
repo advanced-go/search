@@ -94,8 +94,12 @@ func ExampleHttpHandler_Search() {
 	req, _ := http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+PkgPath+":search?q=golang", nil)
 
 	HttpHandler(rec, req)
-	//_, _ := runtime.New[[]byte](rec.Result())
-	fmt.Printf("test: HttpHandler() -> [status-code:%v]\n", rec.Result().StatusCode)
+	buf, status := runtime.ReadAll(rec.Result().Body)
+	s := string(buf)
+	if len(s) > 0 {
+
+	}
+	fmt.Printf("test: HttpHandler() -> [status-code:%v] [read-all:%v]\n", rec.Result().StatusCode, status)
 
 	//Output:
 	//test: HttpHandler() -> [status-code:200]
