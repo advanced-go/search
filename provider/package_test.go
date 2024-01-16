@@ -6,7 +6,6 @@ import (
 	"github.com/advanced-go/core/runtime"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"reflect"
 	"strings"
 )
@@ -35,10 +34,10 @@ func Example_Search() {
 	s := string(buf)
 	if len(s) > 0 {
 	}
-	err = os.WriteFile("C:\\users\\markb\\github\\search\\provider\\resource\\q-golang-1.html", buf, 0666)
-	if err != nil {
-		fmt.Printf("test: os.WriteFile() -> [err:%v]\n", err)
-	}
+	//err = os.WriteFile("C:\\users\\markb\\github\\search\\provider\\resource\\q-golang-1.html", buf, 0666)
+	//if err != nil {
+	//	fmt.Printf("test: os.WriteFile() -> [err:%v]\n", err)
+	//}
 	fmt.Printf("test: search(%v) -> [status:%v] [content-type:%v] [string-length:%v] [byte-length:%v]\n", req.URL.String(), status, status.ContentHeader().Get(http2.ContentType), len(s), len(buf))
 
 	//Output:

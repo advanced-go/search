@@ -29,7 +29,7 @@ func HttpHandler(w http.ResponseWriter, r *http.Request) {
 	runtime.AddRequestId(r)
 	switch strings.ToLower(path) {
 	case searchResource:
-		buf, status := Search[runtime.Log](r.Header, r.URL.Query(), true)
+		buf, status := Search[runtime.Log](r.Header, r.URL.Query(), false)
 		if !status.OK() {
 			http2.WriteResponse[runtime.Log](w, nil, status, nil)
 		} else {
