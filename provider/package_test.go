@@ -6,6 +6,7 @@ import (
 	"github.com/advanced-go/core/runtime"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"reflect"
 	"strings"
 )
@@ -25,7 +26,7 @@ func Example_PkgPath() {
 }
 
 func Example_Search() {
-	resolver.SetOverrides([]runtime.Pair{{searchPath, "https://www.google.com/search?q=slo"}})
+	resolver.SetOverrides([]runtime.Pair{{searchPath, "https://www.google.com/search?q=golang"}})
 	req, err := http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+PkgPath+":search?q=golang", nil)
 	if err != nil {
 		fmt.Printf("test: NewRequest() -> %v\n", err)
@@ -33,6 +34,10 @@ func Example_Search() {
 	buf, status := Search[runtime.Output](nil, req.URL.Query(), false)
 	s := string(buf)
 	if len(s) > 0 {
+	}
+	err = os.WriteFile("C:\\users\\markb\\github\\search\\provider\\resource\\q-golang-1.html", buf, 0666)
+	if err != nil {
+		fmt.Printf("test: os.WriteFile() -> [err:%v]\n", err)
 	}
 	fmt.Printf("test: search(%v) -> [status:%v] [content-type:%v] [string-length:%v] [byte-length:%v]\n", req.URL.String(), status, status.ContentHeader().Get(http2.ContentType), len(s), len(buf))
 

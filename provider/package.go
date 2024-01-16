@@ -58,15 +58,15 @@ func Search[E runtime.ErrorHandler](h http.Header, values url.Values, override b
 		return nil, e.Handle(status, runtime.RequestId(h), searchLocation)
 	}
 	status = runtime.NewStatusOK()
-	if !override {
+	if override {
 		//status1 := runtime.NewStatusOK()
 		//status1.ContentHeader().Add(http2.ContentType, resp.Header.Get(http2.ContentType))
 		//status1.ContentHeader().Add(http2.ContentLength, fmt.Sprintf("%v", len(buf)))
-		return resultsSLO, status
+		return resultsUnix, status
 	}
 	//status.ContentHeader().Add(http2.ContentType, "text/html")
 	//status.ContentHeader().Add(http2.ContentType, "charset=ISO-8859-1")
-	//status.ContentHeader().Add(http2.ContentType,resp.Header.Get(http2.ContentType))
+	status.ContentHeader().Add(http2.ContentType, resp.Header.Get(http2.ContentType))
 	//status.ContentHeader().Set(http2.ContentLength, fmt.Sprintf("%v", len(resultsGolang)))
-	return resultsSLO, status
+	return buf, status
 }
