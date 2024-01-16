@@ -20,17 +20,21 @@ const (
 	searchPath     = "/search?%v"
 	searchResource = "search"
 	resultsPath    = "resource/results.html"
+	sloPath        = "resource/query-slo.html"
 )
 
 var (
-	resolver   = uri2.NewResolver()
-	results    []byte
+	resolver      = uri2.NewResolver()
+	resultsGolang []byte
+	resultsSLO    []byte
+
 	resultsErr error
 )
 
 func init() {
 	resolver.SetOverrides([]runtime.Pair{{searchPath, "https://www.google.com/search?%v"}})
-	results, resultsErr = fs.ReadFile(f, resultsPath)
+	resultsGolang, resultsErr = fs.ReadFile(f, resultsPath)
+	resultsSLO, resultsErr = fs.ReadFile(f, sloPath)
 }
 
 /*

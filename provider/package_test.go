@@ -25,7 +25,7 @@ func Example_PkgPath() {
 }
 
 func Example_Search() {
-	resolver.SetOverrides([]runtime.Pair{{searchPath, "https://www.google.com/search?q=golang"}})
+	resolver.SetOverrides([]runtime.Pair{{searchPath, "https://www.google.com/search?q=slo"}})
 	req, err := http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+PkgPath+":search?q=golang", nil)
 	if err != nil {
 		fmt.Printf("test: NewRequest() -> %v\n", err)
