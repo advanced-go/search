@@ -35,7 +35,6 @@ func HttpHandler(w http.ResponseWriter, r *http.Request) {
 		if !status.OK() {
 			http2.WriteResponse[runtime.Log](w, nil, status, nil)
 		} else {
-
 			http2.WriteResponse[runtime.Log](w, resp.Body, status, resp.Header)
 		}
 	default:
