@@ -1,6 +1,7 @@
 package provider
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/advanced-go/core/http2"
 	"github.com/advanced-go/core/runtime"
@@ -85,32 +86,39 @@ func ExampleHttpHandler_Error() {
 
 }
 
-func ExampleHttpHandler() {
+func ExampleHttpHandler_Text() {
 	resolver.SetOverrides([]runtime.Pair{{searchPath, "https://www.google.com/search?q=golang"}})
-	rec := httptest.NewRecorder()
 	req, _ := http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+PkgPath+":search?q=golang", nil)
 
-	req.Header = make(http.Header)
-	rec = httptest.NewRecorder()
+	rec := httptest.NewRecorder()
 	HttpHandler(rec, req)
 	buf, status := runtime.ReadAll(rec.Result().Body, nil)
 	ct := http.DetectContentType(buf)
 	fmt.Printf("test: HttpHandler() -> [status-code:%v] [read-all:%v] [content-type:%v]\n", rec.Result().StatusCode, status, ct)
 
+	//Output:
+	//test: HttpHandler() -> [status-code:200] [read-all:OK] [content-type:text/html; charset=utf-8]
+
+}
+
+func ExampleHttpHandler_Gzip() {
+	resolver.SetOverrides([]runtime.Pair{{searchPath, "https://www.google.com/search?q=golang"}})
+	req, _ := http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+PkgPath+":search?q=golang", nil)
+
 	req.Header.Add(runtime.AcceptEncoding, "gzip, deflate, br")
-	rec = httptest.NewRecorder()
+	rec := httptest.NewRecorder()
 	HttpHandler(rec, req)
-	buf, status = runtime.ReadAll(rec.Result().Body, nil)
-	ct = http.DetectContentType(buf)
+	buf, status := runtime.ReadAll(rec.Result().Body, nil)
+	ct := http.DetectContentType(buf)
 	fmt.Printf("test: HttpHandler-Gzip() -> [status-code:%v] [read-all:%v] [content-type:%v]\n", rec.Result().StatusCode, status, ct)
 
-	buf, status = runtime.ReadAll(rec.Result().Body, req.Header)
+	rec.Result().Header = rec.Header()
+	buf, status = runtime.ReadAll(bytes.NewReader(buf), rec.Result().Header)
 	ct = http.DetectContentType(buf)
 	fmt.Printf("test: HttpHandler-Gzip-Decoded() -> [status-code:%v] [read-all:%v] [content-type:%v]\n", rec.Result().StatusCode, status, ct)
 
 	//Output:
-	//test: HttpHandler() -> [status-code:200] [read-all:OK] [content-type:text/html; charset=utf-8]
 	//test: HttpHandler-Gzip() -> [status-code:200] [read-all:OK] [content-type:application/x-gzip]
-	//test: HttpHandler-Gzip-Decoded() -> [status-code:200] [read-all:OK] [content-type:text/plain; charset=utf-8]
+	//test: HttpHandler-Gzip-Decoded() -> [status-code:200] [read-all:OK] [content-type:text/html; charset=utf-8]
 
 }
