@@ -93,21 +93,27 @@ func ExampleHttpHandler() {
 	rec := httptest.NewRecorder()
 	req, _ := http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+PkgPath+":search?q=golang", nil)
 
-	req.Header.Add(runtime.AcceptEncoding, "gzip, deflate, br")
+	req.Header = make(http.Header)
+	rec = httptest.NewRecorder()
 	HttpHandler(rec, req)
 	buf, status := runtime.ReadAll(rec.Result().Body, nil)
 	ct := http.DetectContentType(buf)
-	fmt.Printf("test: HttpHandler-Gzip() -> [status-code:%v] [read-all:%v] [content-type:%v]\n", rec.Result().StatusCode, status, ct)
+	fmt.Printf("test: HttpHandler() -> [status-code:%v] [read-all:%v] [content-type:%v]\n", rec.Result().StatusCode, status, ct)
 
-	req.Header = make(http.Header)
+	req.Header.Add(runtime.AcceptEncoding, "gzip, deflate, br")
 	rec = httptest.NewRecorder()
 	HttpHandler(rec, req)
 	buf, status = runtime.ReadAll(rec.Result().Body, nil)
 	ct = http.DetectContentType(buf)
-	fmt.Printf("test: HttpHandler() -> [status-code:%v] [read-all:%v] [content-type:%v]\n", rec.Result().StatusCode, status, ct)
+	fmt.Printf("test: HttpHandler-Gzip() -> [status-code:%v] [read-all:%v] [content-type:%v]\n", rec.Result().StatusCode, status, ct)
+
+	buf, status = runtime.ReadAll(rec.Result().Body, req.Header)
+	ct = http.DetectContentType(buf)
+	fmt.Printf("test: HttpHandler-Gzip-Decoded() -> [status-code:%v] [read-all:%v] [content-type:%v]\n", rec.Result().StatusCode, status, ct)
 
 	//Output:
-	//test: HttpHandler-Gzip() -> [status-code:200] [read-all:OK] [content-type:application/x-gzip]
 	//test: HttpHandler() -> [status-code:200] [read-all:OK] [content-type:text/html; charset=utf-8]
+	//test: HttpHandler-Gzip() -> [status-code:200] [read-all:OK] [content-type:application/x-gzip]
+	//test: HttpHandler-Gzip-Decoded() -> [status-code:200] [read-all:OK] [content-type:text/plain; charset=utf-8]
 
 }
