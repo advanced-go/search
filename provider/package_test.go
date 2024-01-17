@@ -24,7 +24,7 @@ func Example_PkgPath() {
 
 }
 
-func Example_Search() {
+func ExampleSearch() {
 	resolver.SetOverrides([]runtime.Pair{{searchPath, "https://www.google.com/search?q=golang"}})
 	req, err := http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+PkgPath+":search?q=golang", nil)
 	if err != nil {
@@ -45,7 +45,7 @@ func Example_Search() {
 
 }
 
-func Example_Search_Override() {
+func ExampleSearch_Override() {
 	resolver.SetOverrides([]runtime.Pair{{searchPath, resultUri}})
 	req, err := http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+PkgPath+":search?q=golang", nil)
 	if err != nil {
@@ -62,7 +62,7 @@ func Example_Search_Override() {
 
 }
 
-func Example_HttpHandler() {
+func ExampleHttpHandler_Error() {
 	resolver.SetOverrides([]runtime.Pair{{searchPath, resultUri}})
 	rec := httptest.NewRecorder()
 
@@ -72,13 +72,13 @@ func Example_HttpHandler() {
 	req, _ := http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+"invalid-path"+":search?q=golang", nil)
 	rec = httptest.NewRecorder()
 	HttpHandler(rec, req)
-	buf, _ := runtime.New[[]byte](rec.Result())
+	buf, _ := runtime.ReadAll(rec.Result().Body, nil)
 	fmt.Printf("test: HttpHandler() -> [status-code:%v] [content:%v]\n", rec.Result().StatusCode, string(buf))
 
 	req, _ = http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+PkgPath+":searchBad?q=golang", nil)
 	rec = httptest.NewRecorder()
 	HttpHandler(rec, req)
-	buf, _ = runtime.New[[]byte](rec.Result())
+	buf, _ = runtime.ReadAll(rec.Result().Body, nil)
 	fmt.Printf("test: HttpHandler() -> [status-code:%v] [content:%v]\n", rec.Result().StatusCode, string(buf))
 
 	//Output:
@@ -88,20 +88,26 @@ func Example_HttpHandler() {
 
 }
 
-func ExampleHttpHandler_Search() {
+func ExampleHttpHandler() {
 	resolver.SetOverrides([]runtime.Pair{{searchPath, "https://www.google.com/search?q=golang"}})
 	rec := httptest.NewRecorder()
 	req, _ := http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+PkgPath+":search?q=golang", nil)
-	req.Header.Add("Accept-Encoding", "gzip")
-	HttpHandler(rec, req)
-	buf, status := runtime.ReadAll(rec.Result().Body)
-	s := string(buf)
-	if len(s) > 0 {
 
-	}
-	fmt.Printf("test: HttpHandler() -> [status-code:%v] [read-all:%v]\n", rec.Result().StatusCode, status)
+	req.Header.Add(runtime.AcceptEncoding, "gzip, deflate, br")
+	HttpHandler(rec, req)
+	buf, status := runtime.ReadAll(rec.Result().Body, nil)
+	ct := http.DetectContentType(buf)
+	fmt.Printf("test: HttpHandler-Gzip() -> [status-code:%v] [read-all:%v] [content-type:%v]\n", rec.Result().StatusCode, status, ct)
+
+	req.Header = make(http.Header)
+	rec = httptest.NewRecorder()
+	HttpHandler(rec, req)
+	buf, status = runtime.ReadAll(rec.Result().Body, nil)
+	ct = http.DetectContentType(buf)
+	fmt.Printf("test: HttpHandler() -> [status-code:%v] [read-all:%v] [content-type:%v]\n", rec.Result().StatusCode, status, ct)
 
 	//Output:
-	//test: HttpHandler() -> [status-code:200] [read-all:OK]
-	
+	//test: HttpHandler-Gzip() -> [status-code:200] [read-all:OK] [content-type:application/x-gzip]
+	//test: HttpHandler() -> [status-code:200] [read-all:OK] [content-type:text/html; charset=utf-8]
+
 }

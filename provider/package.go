@@ -49,18 +49,29 @@ func Search[E runtime.ErrorHandler](h http.Header, values url.Values) ([]byte, r
 		return nil, runtime.NewStatus(http.StatusBadRequest)
 	}
 	var e E
+	accept := ""
 
-	newUrl := resolver.Build(searchPath, values.Encode())
-	resp, status := exchange.Get(newUrl, nil)
+	newHeader := make(http.Header)
+	if h != nil {
+		accept = h.Get(runtime.AcceptEncoding)
+		if len(accept) > 0 {
+			newHeader.Add(runtime.AcceptEncoding, accept)
+		}
+	}
+	uri := resolver.Build(searchPath, values.Encode())
+	resp, status := exchange.Get(uri, newHeader)
 	if !status.OK() {
 		return nil, e.Handle(status, runtime.RequestId(h), searchLocation)
 	}
 	var buf []byte
-	buf, status = runtime.ReadAll(resp.Body)
+	buf, status = runtime.ReadAll(resp.Body, nil)
 	if !status.OK() {
 		return nil, e.Handle(status, runtime.RequestId(h), searchLocation)
 	}
 	status = runtime.NewStatusOK()
 	status.ContentHeader().Add(http2.ContentType, resp.Header.Get(http2.ContentType))
+	if len(accept) > 0 {
+		status.ContentHeader().Add(runtime.ContentEncoding, resp.Header.Get(runtime.ContentEncoding))
+	}
 	return buf, status
 }
