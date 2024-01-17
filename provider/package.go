@@ -31,12 +31,12 @@ func HttpHandler(w http.ResponseWriter, r *http.Request) {
 	runtime.AddRequestId(r)
 	switch strings.ToLower(path) {
 	case searchResource:
-		buf, status := Search[runtime.Log](r.Header, r.URL.Query())
+		resp, status := Search[runtime.Log](r.Header, r.URL.Query())
 		if !status.OK() {
 			http2.WriteResponse[runtime.Log](w, nil, status, nil)
 		} else {
 
-			http2.WriteResponse[runtime.Log](w, buf, status, status.ContentHeader())
+			http2.WriteResponse[runtime.Log](w, resp.Body, status, resp.Header)
 		}
 	default:
 		status := runtime.NewStatusWithContent(http.StatusNotFound, errors.New(fmt.Sprintf("error invalid URI, resource was not found: [%v]", path)), false)
@@ -44,16 +44,15 @@ func HttpHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func Search[E runtime.ErrorHandler](h http.Header, values url.Values) ([]byte, runtime.Status) {
+func Search[E runtime.ErrorHandler](h http.Header, values url.Values) (*http.Response, runtime.Status) {
 	if values == nil {
 		return nil, runtime.NewStatus(http.StatusBadRequest)
 	}
 	var e E
-	accept := ""
 
 	newHeader := make(http.Header)
 	if h != nil {
-		accept = h.Get(runtime.AcceptEncoding)
+		accept := h.Get(runtime.AcceptEncoding)
 		if len(accept) > 0 {
 			newHeader.Add(runtime.AcceptEncoding, accept)
 		}
@@ -63,6 +62,10 @@ func Search[E runtime.ErrorHandler](h http.Header, values url.Values) ([]byte, r
 	if !status.OK() {
 		return nil, e.Handle(status, runtime.RequestId(h), searchLocation)
 	}
+	return resp, status
+}
+
+/*
 	var buf []byte
 	buf, status = runtime.ReadAll(resp.Body, nil)
 	if !status.OK() {
@@ -73,5 +76,5 @@ func Search[E runtime.ErrorHandler](h http.Header, values url.Values) ([]byte, r
 	if len(accept) > 0 {
 		status.ContentHeader().Add(runtime.ContentEncoding, resp.Header.Get(runtime.ContentEncoding))
 	}
-	return buf, status
-}
+
+*/
