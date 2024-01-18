@@ -112,7 +112,6 @@ func ExampleHttpHandler_Gzip() {
 	ct := http.DetectContentType(buf)
 	fmt.Printf("test: HttpHandler-Gzip() -> [status-code:%v] [read-all:%v] [content-type:%v]\n", rec.Result().StatusCode, status, ct)
 
-	rec.Result().Header = rec.Header()
 	buf, status = runtime.ReadAll(bytes.NewReader(buf), rec.Result().Header)
 	ct = http.DetectContentType(buf)
 	fmt.Printf("test: HttpHandler-Gzip-Decoded() -> [status-code:%v] [read-all:%v] [content-type:%v]\n", rec.Result().StatusCode, status, ct)
