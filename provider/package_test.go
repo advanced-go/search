@@ -81,7 +81,7 @@ func ExampleHttpHandler_Error() {
 
 	//Output:
 	//test: HttpHandler() -> [status-code:500]
-	//test: HttpHandler() -> [status-code:400] [content:error invalid URI, NID does not match: "/invalid-path:search" "github/advanced-go/search/provider"]
+	//test: HttpHandler() -> [status-code:400] [content:error: invalid URI, NID does not match: "/invalid-path:search" "github/advanced-go/search/provider"]
 	//test: HttpHandler() -> [status-code:404] [content:error invalid URI, resource was not found: [searchBad]]
 
 }
