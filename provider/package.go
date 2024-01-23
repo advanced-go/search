@@ -17,7 +17,7 @@ const (
 	PkgPath = "github/advanced-go/search/provider"
 
 	searchLocation = PkgPath + ":search"
-	httpHandlerLoc = PkgPath + ":HttpHander"
+	httpHandlerLoc = PkgPath + ":HttpHandler"
 )
 
 // Accept-Encoding :  gzip, deflate, br
