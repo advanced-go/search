@@ -1,7 +1,6 @@
 package provider
 
 import (
-	"github.com/advanced-go/core/runtime"
 	uri2 "github.com/advanced-go/core/uri"
 )
 
@@ -27,7 +26,7 @@ var (
 )
 
 func init() {
-	resolver.SetOverrides([]runtime.Pair{{searchPath, "https://www.google.com/search?%v"}})
+	resolver.SetOverrides([]uri2.Pair{{searchPath, "https://www.google.com/search?%v"}})
 }
 
 /*

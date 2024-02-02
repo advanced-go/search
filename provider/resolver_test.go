@@ -3,6 +3,7 @@ package provider
 import (
 	"fmt"
 	"github.com/advanced-go/core/runtime"
+	uri2 "github.com/advanced-go/core/uri"
 	"net/url"
 )
 
@@ -31,12 +32,12 @@ func ExampleBuild_Override() {
 	uri := resolver.Build(searchPath, v.Encode())
 	fmt.Printf("test: resolver.Build(\"%v\") -> [uri:%v]\n", searchPath, uri)
 
-	resolver.SetOverrides([]runtime.Pair{{searchPath, "https://www.google.com/search?q=Pascal"}})
+	resolver.SetOverrides([]uri2.Pair{{searchPath, "https://www.google.com/search?q=Pascal"}})
 	s := v.Encode()
 	uri = resolver.Build(searchPath, s)
 	fmt.Printf("test: resolver.Build(\"%v\") -> [uri:%v]\n", searchPath, uri)
 
-	resolver.SetOverrides([]runtime.Pair{{searchPath, "file://[cwd]/providertest/resource/query-result.txt"}})
+	resolver.SetOverrides([]uri2.Pair{{searchPath, "file://[cwd]/providertest/resource/query-result.txt"}})
 	s = v.Encode()
 	uri = resolver.Build(searchPath, s)
 	fmt.Printf("test: resolver.Build(\"%v\") -> [uri:%v]\n", searchPath, uri)

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/advanced-go/core/runtime"
+	uri2 "github.com/advanced-go/core/uri"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -27,7 +28,7 @@ func Example_PkgPath() {
 }
 
 func ExampleHttpHandler_Error() {
-	resolver.SetOverrides([]runtime.Pair{{searchPath, resultUri}})
+	resolver.SetOverrides([]uri2.Pair{{searchPath, resultUri}})
 	rec := httptest.NewRecorder()
 
 	HttpHandler(rec, nil)
@@ -53,7 +54,7 @@ func ExampleHttpHandler_Error() {
 }
 
 func ExampleHttpHandler_Text() {
-	resolver.SetOverrides([]runtime.Pair{{searchPath, "https://www.google.com/search?q=golang"}})
+	resolver.SetOverrides([]uri2.Pair{{searchPath, "https://www.google.com/search?q=golang"}})
 	req, _ := http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+PkgPath+":search?q=golang", nil)
 
 	rec := httptest.NewRecorder()
@@ -68,7 +69,7 @@ func ExampleHttpHandler_Text() {
 }
 
 func ExampleHttpHandler_Gzip() {
-	resolver.SetOverrides([]runtime.Pair{{searchPath, "https://www.google.com/search?q=golang"}})
+	resolver.SetOverrides([]uri2.Pair{{searchPath, "https://www.google.com/search?q=golang"}})
 	req, _ := http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+PkgPath+":search?q=golang", nil)
 
 	req.Header.Add(runtime.AcceptEncoding, "gzip, deflate, br")

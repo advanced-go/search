@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"github.com/advanced-go/core/http2"
 	"github.com/advanced-go/core/runtime"
+	uri2 "github.com/advanced-go/core/uri"
 	"net/http"
 )
 
 func ExampleSearch() {
-	resolver.SetOverrides([]runtime.Pair{{searchPath, "https://www.google.com/search?q=golang"}})
+	resolver.SetOverrides([]uri2.Pair{{searchPath, "https://www.google.com/search?q=golang"}})
 	req, err := http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+PkgPath+":search?q=golang", nil)
 	if err != nil {
 		fmt.Printf("test: NewRequest() -> %v\n", err)
@@ -26,7 +27,7 @@ func ExampleSearch() {
 }
 
 func ExampleSearch_Override() {
-	resolver.SetOverrides([]runtime.Pair{{searchPath, resultUri}})
+	resolver.SetOverrides([]uri2.Pair{{searchPath, resultUri}})
 	req, err := http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+PkgPath+":search?q=golang", nil)
 	if err != nil {
 		fmt.Printf("test: NewRequest() -> %v\n", err)
