@@ -11,7 +11,7 @@ func ExampleStartupPing() {
 	r, _ := http.NewRequest("", "github/advanced-go/search/provider:ping", nil)
 	nid, rsc, ok := uri.UprootUrn(r.URL.Path)
 	status := messaging.Ping(nil, nid)
-	
+
 	fmt.Printf("test: Ping() -> [nid:%v] [nss:%v] [ok:%v] [status:%v]\n", nid, rsc, ok, status)
 
 	//Output:
