@@ -3,6 +3,7 @@ package provider
 import (
 	"fmt"
 	"github.com/advanced-go/core/http2"
+	"github.com/advanced-go/core/io2"
 	"github.com/advanced-go/core/runtime"
 	uri2 "github.com/advanced-go/core/uri"
 	"net/http"
@@ -33,7 +34,7 @@ func ExampleSearch_Override() {
 		fmt.Printf("test: NewRequest() -> %v\n", err)
 	}
 	resp, status := search[runtime.Output](nil, req.URL.Query())
-	buf, _ := runtime.ReadAll(resp.Body, nil)
+	buf, _ := io2.ReadAll(resp.Body, nil)
 	s := string(buf)
 	s = s[:len(s)-2]
 	fmt.Printf("test: Search(%v) -> [status:%v] [content:%v] [content-type:%v]\n", req.URL.String(), status, s, resp.Header.Get(http2.ContentType))

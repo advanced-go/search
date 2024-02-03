@@ -2,6 +2,7 @@ package provider
 
 import (
 	"github.com/advanced-go/core/exchange"
+	"github.com/advanced-go/core/io2"
 	"github.com/advanced-go/core/runtime"
 	"net/http"
 	"net/url"
@@ -12,7 +13,7 @@ const (
 	httpHandlerLoc = PkgPath + ":HttpHandler"
 )
 
-func search[E runtime.ErrorHandler](h http.Header, values url.Values) (*http.Response, runtime.Status) {
+func search[E runtime.ErrorHandler](h http.Header, values url.Values) (*http.Response, *runtime.Status) {
 	if values == nil {
 		return nil, runtime.NewStatus(http.StatusBadRequest)
 	}
@@ -20,9 +21,9 @@ func search[E runtime.ErrorHandler](h http.Header, values url.Values) (*http.Res
 
 	newHeader := make(http.Header)
 	if h != nil {
-		accept := h.Get(runtime.AcceptEncoding)
+		accept := h.Get(io2.AcceptEncoding)
 		if len(accept) > 0 {
-			newHeader.Add(runtime.AcceptEncoding, accept)
+			newHeader.Add(io2.AcceptEncoding, accept)
 		}
 	}
 	uri := resolver.Build(searchPath, values.Encode())

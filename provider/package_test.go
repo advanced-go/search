@@ -3,7 +3,7 @@ package provider
 import (
 	"bytes"
 	"fmt"
-	"github.com/advanced-go/core/runtime"
+	"github.com/advanced-go/core/io2"
 	uri2 "github.com/advanced-go/core/uri"
 	"net/http"
 	"net/http/httptest"
@@ -37,13 +37,13 @@ func ExampleHttpHandler_Error() {
 	req, _ := http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+"invalid-path"+":search?q=golang", nil)
 	rec = httptest.NewRecorder()
 	HttpHandler(rec, req)
-	buf, _ := runtime.ReadAll(rec.Result().Body, nil)
+	buf, _ := io2.ReadAll(rec.Result().Body, nil)
 	fmt.Printf("test: HttpHandler() -> [status-code:%v] [content:%v]\n", rec.Result().StatusCode, string(buf))
 
 	req, _ = http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+PkgPath+":searchBad?q=golang", nil)
 	rec = httptest.NewRecorder()
 	HttpHandler(rec, req)
-	buf, _ = runtime.ReadAll(rec.Result().Body, nil)
+	buf, _ = io2.ReadAll(rec.Result().Body, nil)
 	fmt.Printf("test: HttpHandler() -> [status-code:%v] [content:%v]\n", rec.Result().StatusCode, string(buf))
 
 	//Output:
@@ -59,7 +59,7 @@ func ExampleHttpHandler_Text() {
 
 	rec := httptest.NewRecorder()
 	HttpHandler(rec, req)
-	buf, status := runtime.ReadAll(rec.Result().Body, nil)
+	buf, status := io2.ReadAll(rec.Result().Body, nil)
 	ct := http.DetectContentType(buf)
 	fmt.Printf("test: HttpHandler() -> [status-code:%v] [read-all:%v] [content-type:%v]\n", rec.Result().StatusCode, status, ct)
 
@@ -72,14 +72,14 @@ func ExampleHttpHandler_Gzip() {
 	resolver.SetOverrides([]uri2.Pair{{searchPath, "https://www.google.com/search?q=golang"}})
 	req, _ := http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+PkgPath+":search?q=golang", nil)
 
-	req.Header.Add(runtime.AcceptEncoding, "gzip, deflate, br")
+	req.Header.Add(io2.AcceptEncoding, "gzip, deflate, br")
 	rec := httptest.NewRecorder()
 	HttpHandler(rec, req)
-	buf, status := runtime.ReadAll(rec.Result().Body, nil)
+	buf, status := io2.ReadAll(rec.Result().Body, nil)
 	ct := http.DetectContentType(buf)
 	fmt.Printf("test: HttpHandler-Gzip() -> [status-code:%v] [read-all:%v] [content-type:%v]\n", rec.Result().StatusCode, status, ct)
 
-	buf, status = runtime.ReadAll(bytes.NewReader(buf), rec.Result().Header)
+	buf, status = io2.ReadAll(bytes.NewReader(buf), rec.Result().Header)
 	ct = http.DetectContentType(buf)
 	fmt.Printf("test: HttpHandler-Gzip-Decoded() -> [status-code:%v] [read-all:%v] [content-type:%v]\n", rec.Result().StatusCode, status, ct)
 
