@@ -2,7 +2,6 @@ package provider
 
 import (
 	"fmt"
-	"github.com/advanced-go/core/runtime"
 	uri2 "github.com/advanced-go/core/uri"
 	"net/url"
 )
@@ -24,7 +23,7 @@ func ExampleBuild() {
 }
 
 func ExampleBuild_Override() {
-	runtime.SetProdEnvironment()
+	//runtime.SetProdEnvironment()
 
 	v := make(url.Values)
 	v.Add(queryArg, "golang")

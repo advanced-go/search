@@ -15,31 +15,28 @@ func ExampleSearch() {
 	if err != nil {
 		fmt.Printf("test: NewRequest() -> %v\n", err)
 	}
-	resp, status := search[runtime.Output](nil, req.URL.Query())
-	//s := string(buf)
-	//if len(s) > 0 {
-	//}
+	resp, status := search[runtime.Output](nil, req.Header, req.URL.Query())
+	buf, _ := io2.ReadAll(resp.Body, resp.Header)
 
-	fmt.Printf("test: Search(%v) -> [status:%v] [content-type:%v] [content-length:%v]\n", req.URL.String(), status, resp.Header.Get(http2.ContentType), 0)
+	fmt.Printf("test: Search(%v) -> [status:%v] [content-type:%v] [content-encoding:%v] [content-length:%v]\n", req.URL.String(), status, resp.Header.Get(http2.ContentType), resp.Header.Get(io2.ContentEncoding), len(buf))
 
 	//Output:
-	//test: Search(http://localhost:8080/github/advanced-go/search/provider:search?q=golang) -> [status:OK] [content-type:text/html; charset=ISO-8859-1] [content-length:115289]
+	//test: Search(http://localhost:8080/github/advanced-go/search/provider:search?q=golang) -> [status:OK] [content-type:text/html; charset=ISO-8859-1] [content-encoding:] [content-length:116450]
 
 }
 
-func ExampleSearch_Override() {
-	resolver.SetOverrides([]uri2.Pair{{searchPath, resultUri}})
+func ExampleSearch_Timeout() {
+	resolver.SetOverrides([]uri2.Pair{{searchPath, "https://www.google.com/search?q=golang"}})
 	req, err := http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+PkgPath+":search?q=golang", nil)
 	if err != nil {
 		fmt.Printf("test: NewRequest() -> %v\n", err)
 	}
-	resp, status := search[runtime.Output](nil, req.URL.Query())
-	buf, _ := io2.ReadAll(resp.Body, nil)
-	s := string(buf)
-	s = s[:len(s)-2]
-	fmt.Printf("test: Search(%v) -> [status:%v] [content:%v] [content-type:%v]\n", req.URL.String(), status, s, resp.Header.Get(http2.ContentType))
+	resp, status := search[runtime.Output](nil, req.Header, req.URL.Query())
+	buf, _ := io2.ReadAll(resp.Body, resp.Header)
+
+	fmt.Printf("test: Search(%v) -> [status:%v] [content-type:%v] [content-encoding:%v] [content-length:%v]\n", req.URL.String(), status, resp.Header.Get(http2.ContentType), resp.Header.Get(io2.ContentEncoding), len(buf))
 
 	//Output:
-	//test: Search(http://localhost:8080/github/advanced-go/search/provider:search?q=golang) -> [status:OK] [content:This is an alternate result for a Google query.] [content-type:text/plain]
+	//test: Search(http://localhost:8080/github/advanced-go/search/provider:search?q=golang) -> [status:OK] [content-type:text/html; charset=ISO-8859-1] [content-encoding:] [content-length:116450]
 
 }
