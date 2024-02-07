@@ -29,9 +29,9 @@ func Example_PkgPath() {
 
 func ExampleHttpHandler_Error() {
 	// Need to set override
-	resolver.SetOverrides([]uri2.Pair{{searchPath, resultUri}})
-	rec := httptest.NewRecorder()
+	defer resolver.SetOverrides([]uri2.Pair{{searchPath, resultUri}})()
 
+	rec := httptest.NewRecorder()
 	HttpHandler(rec, nil)
 	fmt.Printf("test: HttpHandler() -> [status-code:%v]\n", rec.Result().StatusCode)
 
@@ -55,10 +55,7 @@ func ExampleHttpHandler_Error() {
 }
 
 func ExampleHttpHandler_Text() {
-	// Need to reset original override
-	resolver.SetOverrides([]uri2.Pair{{searchPath, "https://www.google.com/search?q=golang"}})
 	req, _ := http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+PkgPath+":search?q=golang", nil)
-
 	rec := httptest.NewRecorder()
 	HttpHandler(rec, req)
 	buf, status := io2.ReadAll(rec.Result().Body, nil)
@@ -71,10 +68,7 @@ func ExampleHttpHandler_Text() {
 }
 
 func ExampleHttpHandler_Gzip() {
-	// Need to reset original override
-	resolver.SetOverrides([]uri2.Pair{{searchPath, "https://www.google.com/search?q=golang"}})
 	req, _ := http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+PkgPath+":search?q=golang", nil)
-
 	req.Header.Add(io2.AcceptEncoding, io2.GzipEncoding)
 	rec := httptest.NewRecorder()
 	HttpHandler(rec, req)
