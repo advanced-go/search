@@ -32,7 +32,7 @@ func search[E runtime.ErrorHandler](ctx context.Context, h http.Header, values u
 		}
 	}
 	uri := resolver.Build(searchPath, values.Encode())
-	defer apply(ctx, &newCtx, http.MethodGet, uri, h, googleControllerName, access.StatusCode(&status))()
+	defer apply(ctx, &newCtx, access.NewRequest(h, http.MethodGet, uri), &resp, googleControllerName, access.StatusCode(&status))()
 	resp, status = exchange.Get(newCtx, uri, newHeader)
 	if !status.OK() {
 		return nil, nil, e.Handle(status, runtime.RequestId(h), searchLocation)
@@ -41,6 +41,7 @@ func search[E runtime.ErrorHandler](ctx context.Context, h http.Header, values u
 	if !status1.OK() {
 		return nil, nil, e.Handle(status1, runtime.RequestId(h), searchLocation)
 	}
+	resp.ContentLength = int64(len(buf))
 	return buf, resp.Header, status1
 }
 

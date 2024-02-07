@@ -33,7 +33,7 @@ func init() {
 	}
 }
 
-func apply(ctx context.Context, newCtx *context.Context, method, uri string, h http.Header, controllerName string, statusCode access.StatusCodeFunc) func() {
+func apply(ctx context.Context, newCtx *context.Context, req *http.Request, resp **http.Response, controllerName string, statusCode access.StatusCodeFunc) func() {
 	var c *controller.Controller
 	if cm != nil {
 		c, _ = cm.Get(controllerName)
@@ -43,5 +43,5 @@ func apply(ctx context.Context, newCtx *context.Context, method, uri string, h h
 		c.Name = "error"
 		c.Duration = 0
 	}
-	return controller.Apply(ctx, newCtx, method, uri, c.Name, h, c.Duration, statusCode)
+	return controller.Apply(ctx, newCtx, req, resp, c.Name, c.Duration, statusCode)
 }
