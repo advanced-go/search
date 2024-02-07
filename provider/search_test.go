@@ -1,12 +1,14 @@
 package provider
 
 import (
+	"context"
 	"fmt"
 	"github.com/advanced-go/core/http2"
 	"github.com/advanced-go/core/io2"
 	"github.com/advanced-go/core/runtime"
 	uri2 "github.com/advanced-go/core/uri"
 	"net/http"
+	"time"
 )
 
 func ExampleSearch() {
@@ -31,12 +33,14 @@ func ExampleSearch_Timeout() {
 	if err != nil {
 		fmt.Printf("test: NewRequest() -> %v\n", err)
 	}
-	resp, status := search[runtime.Output](nil, req.Header, req.URL.Query())
-	buf, _ := io2.ReadAll(resp.Body, resp.Header)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*5)
+	defer cancel()
+	resp, status := search[runtime.Output](ctx, req.Header, req.URL.Query())
 
-	fmt.Printf("test: Search(%v) -> [status:%v] [content-type:%v] [content-encoding:%v] [content-length:%v]\n", req.URL.String(), status, resp.Header.Get(http2.ContentType), resp.Header.Get(io2.ContentEncoding), len(buf))
+	fmt.Printf("test: Search(%v) -> [status:%v][status-code:%v]\n", req.URL.String(), status, resp.StatusCode)
 
 	//Output:
-	//test: Search(http://localhost:8080/github/advanced-go/search/provider:search?q=golang) -> [status:OK] [content-type:text/html; charset=ISO-8859-1] [content-encoding:] [content-length:116450]
+	//{ "code":4, "status":"Deadline Exceeded", "request-id":null, "errors" : [ "Get "https://www.google.com/search?q=golang": context deadline exceeded" ], "trace" : [ "https://github.com/advanced-go/search/tree/main/provider#search","https://github.com/advanced-go/core/tree/main/exchange#Get","https://github.com/advanced-go/core/tree/main/exchange#Do" ] }
+	//test: Search(http://localhost:8080/github/advanced-go/search/provider:search?q=golang) -> [status:Deadline Exceeded [Get "https://www.google.com/search?q=golang": context deadline exceeded]][status-code:4]
 
 }

@@ -32,10 +32,10 @@ func search[E runtime.ErrorHandler](ctx context.Context, h http.Header, values u
 		}
 	}
 	uri := resolver.Build(searchPath, values.Encode())
-	defer apply(nil, &newCtx, http.MethodGet, uri, h, googleControllerName, access.StatusCode(&status))()
-	resp, status = exchange.Get(ctx, uri, newHeader)
+	defer apply(ctx, &newCtx, http.MethodGet, uri, h, googleControllerName, access.StatusCode(&status))()
+	resp, status = exchange.Get(newCtx, uri, newHeader)
 	if !status.OK() {
-		return nil, e.Handle(status, runtime.RequestId(h), searchLocation)
+		return resp, e.Handle(status, runtime.RequestId(h), searchLocation)
 	}
 	return resp, status
 }
