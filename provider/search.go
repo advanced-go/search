@@ -15,9 +15,9 @@ const (
 	httpHandlerLoc = PkgPath + ":HttpHandler"
 )
 
-func search[E runtime.ErrorHandler](ctx context.Context, h http.Header, values url.Values) (*http.Response, *runtime.Status) {
+func search[E runtime.ErrorHandler](ctx context.Context, h http.Header, values url.Values) ([]byte, http.Header, *runtime.Status) {
 	if values == nil {
-		return nil, runtime.NewStatus(http.StatusBadRequest)
+		return nil, nil, runtime.NewStatus(http.StatusBadRequest)
 	}
 	var e E
 	var newCtx context.Context
@@ -35,9 +35,13 @@ func search[E runtime.ErrorHandler](ctx context.Context, h http.Header, values u
 	defer apply(ctx, &newCtx, http.MethodGet, uri, h, googleControllerName, access.StatusCode(&status))()
 	resp, status = exchange.Get(newCtx, uri, newHeader)
 	if !status.OK() {
-		return resp, e.Handle(status, runtime.RequestId(h), searchLocation)
+		return nil, nil, e.Handle(status, runtime.RequestId(h), searchLocation)
 	}
-	return resp, status
+	buf, status1 := io2.ReadAll(resp.Body, h)
+	if !status1.OK() {
+		return nil, nil, e.Handle(status1, runtime.RequestId(h), searchLocation)
+	}
+	return buf, resp.Header, status1
 }
 
 /*
