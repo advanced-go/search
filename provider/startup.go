@@ -22,7 +22,7 @@ func init() {
 
 func messageHandler(msg *messaging.Message) {
 	start := time.Now()
-	switch msg.Event {
+	switch msg.Event() {
 	case messaging.StartupEvent:
 		// Any processing for a Startup event would be here
 		messaging.SendReply(msg, messaging.NewStatusDuration(http.StatusOK, time.Since(start)))
