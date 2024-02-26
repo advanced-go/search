@@ -30,7 +30,7 @@ func HttpHandler(w http.ResponseWriter, r *http.Request) {
 			http2.WriteResponse[runtime.Log](w, buf, status, h)
 		}
 	default:
-		status := runtime.NewStatusError(http.StatusNotFound, httpHandlerLoc, errors.New(fmt.Sprintf("error invalid URI, resource was not found: [%v]", path)))
+		status := runtime.NewStatusError(http.StatusNotFound, errors.New(fmt.Sprintf("error invalid URI, resource was not found: [%v]", path)), nil)
 		http2.WriteResponse[runtime.Log](w, status.Error(), status, nil)
 	}
 }

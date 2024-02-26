@@ -29,7 +29,7 @@ func Example_PkgPath() {
 
 func ExampleHttpHandler_Error() {
 	// Need to set overrides, the returned func will reset original values
-	defer resolver.SetOverrides([]uri2.Pair{{searchPath, resultUri}})()
+	defer resolver.SetTemplates([]uri2.Pair{{searchPath, resultUri}})()
 
 	rec := httptest.NewRecorder()
 	HttpHandler(rec, nil)

@@ -20,5 +20,5 @@ var (
 )
 
 func init() {
-	resolver.SetOverrides([]uri2.Pair{{searchPath, "https://www.google.com/search?%v"}})
+	resolver.SetTemplates([]uri2.Pair{{searchPath, "https://www.google.com/search?%v"}})
 }
