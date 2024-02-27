@@ -27,6 +27,11 @@ uri := resolver.Build(searchPath, values.Encode())
 
 A controller is configured and used for implementing timeouts and access logging. 
 ~~~
+func init() {
+	buf, err := fs.ReadFile(f, controllersPath)
+	cm, err = controller.NewMap(buf)
+}
+
 // Controller apply call 
 defer apply(ctx, &newCtx, access.NewRequest(h, http.MethodGet, uri), &resp, googleControllerName, access.StatusCode(&status))()
 ~~~
