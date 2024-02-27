@@ -13,7 +13,7 @@ func HttpHandler(w http.ResponseWriter, r *http.Request) {
 }
 ~~~
 
-Search also utilizes a resolver for building URI's, and a controller for implementing timeouts and access logging. The resolver is also used to build URI's for testing.
+Search also utilizes a resolver for building URI's.
 
 ~~~
 func init() {
@@ -23,8 +23,12 @@ func init() {
 // Perform resolution through expansion
 uri := resolver.Build(searchPath, values.Encode())
 
-// Controller apply call
-defer apply(ctx, &newCtx, access.NewRequest(h, http.MethodGet, uri), &resp, googleControllerName, access.StatusCode(&status))()
-	
 ~~~
+
+A controller is configured and used for implementing timeouts and access logging. 
+~~~
+// Controller apply call 
+defer apply(ctx, &newCtx, access.NewRequest(h, http.MethodGet, uri), &resp, googleControllerName, access.StatusCode(&status))()
+~~~
+
 
