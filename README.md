@@ -25,7 +25,7 @@ uri := resolver.Build(searchPath, values.Encode())
 
 ~~~
 
-A controller is configured and used for implementing timeouts and access logging. 
+A controller is configured and used for implementing timeouts and access logging. Access logging is provided by a uniform interface in core/access.
 ~~~
 func init() {
 	buf, err := fs.ReadFile(f, controllersPath)
