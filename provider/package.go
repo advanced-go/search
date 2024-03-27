@@ -23,14 +23,14 @@ func HttpHandler(w http.ResponseWriter, r *http.Request) {
 	runtime.AddRequestId(r)
 	switch strings.ToLower(path) {
 	case searchResource:
-		buf, h, status := search[runtime.Log](nil, r.Header, r.URL.Query())
+		buf, h, status := search[runtime.Log](r.Context(), r.Header, r.URL.Query())
 		if !status.OK() {
 			http2.WriteResponse[runtime.Log](w, nil, status, nil)
 		} else {
 			http2.WriteResponse[runtime.Log](w, buf, status, h)
 		}
 	default:
-		status := runtime.NewStatusError(http.StatusNotFound, errors.New(fmt.Sprintf("error invalid URI, resource was not found: [%v]", path)), nil)
+		status := runtime.NewStatusError(http.StatusNotFound, errors.New(fmt.Sprintf("error invalid URI, resource was not found: [%v]", path)))
 		http2.WriteResponse[runtime.Log](w, status.Error(), status, nil)
 	}
 }
