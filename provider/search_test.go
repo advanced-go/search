@@ -40,7 +40,6 @@ func ExampleSearch_Timeout() {
 	fmt.Printf("test: Search(%v) -> [status:%v] [status-code:%v]\n", req.URL.String(), status, status.Code)
 
 	//Output:
-	//{ "code":4, "status":"Deadline Exceeded", "request-id":null, "errors" : [ "Get "https://www.google.com/search?q=golang": context deadline exceeded" ], "trace" : [ "https://github.com/advanced-go/search/tree/main/provider#search[...]","https://github.com/advanced-go/core/tree/main/exchange#Get","https://github.com/advanced-go/core/tree/main/exchange#DoHttp" ] }
-	//test: Search(http://localhost:8080/github/advanced-go/search/provider:search?q=golang) -> [status:Deadline Exceeded [Get "https://www.google.com/search?q=golang": context deadline exceeded]] [status-code:4]
+	//test: Search(http://localhost:8080/github/advanced-go/search/provider:search?q=golang) -> [status:Timeout [Get "https://www.google.com/search?q=golang": context deadline exceeded]] [status-code:504]
 
 }
