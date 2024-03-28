@@ -2,6 +2,7 @@ package provider
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"github.com/advanced-go/core/io2"
 	uri2 "github.com/advanced-go/core/uri"
@@ -9,6 +10,7 @@ import (
 	"net/http/httptest"
 	"reflect"
 	"strings"
+	"time"
 )
 
 const (
@@ -83,5 +85,20 @@ func ExampleHttpHandler_Gzip() {
 	//Output:
 	//test: HttpHandler-Gzip() -> [status-code:200] [read-all:OK] [content-type:application/x-gzip]
 	//test: HttpHandler-Gzip-Decoded() -> [status-code:200] [read-all:OK] [content-type:text/html; charset=utf-8]
+
+}
+
+func ExampleHttpHandler_Timeout() {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*10)
+	defer cancel()
+	req, _ := http.NewRequestWithContext(ctx, http.MethodGet, "http://localhost:8080"+"/"+PkgPath+":search?q=golang", nil)
+	rec := httptest.NewRecorder()
+	HttpHandler(rec, req)
+	buf, status := io2.ReadAll(rec.Result().Body, nil)
+	ct := http.DetectContentType(buf)
+	fmt.Printf("test: HttpHandler() -> [status-code:%v] [read-all:%v] [content-type:%v] [buf:%v]\n", rec.Result().StatusCode, status, ct, buf)
+
+	//Output:
+	//test: HttpHandler() -> [status-code:504] [read-all:OK] [content-type:text/plain; charset=utf-8] [buf:[]]
 
 }

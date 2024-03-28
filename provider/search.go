@@ -2,7 +2,6 @@ package provider
 
 import (
 	"context"
-	"github.com/advanced-go/core/access"
 	"github.com/advanced-go/core/exchange"
 	"github.com/advanced-go/core/io2"
 	"github.com/advanced-go/core/runtime"
@@ -15,9 +14,9 @@ func search[E runtime.ErrorHandler](ctx context.Context, h http.Header, values u
 		return nil, nil, runtime.NewStatus(http.StatusBadRequest)
 	}
 	var e E
-	var newCtx context.Context
-	var status *runtime.Status
-	var resp *http.Response
+	//var newCtx context.Context
+	//var status *runtime.Status
+	//var resp *http.Response
 
 	newHeader := make(http.Header)
 	if h != nil {
@@ -27,8 +26,8 @@ func search[E runtime.ErrorHandler](ctx context.Context, h http.Header, values u
 		}
 	}
 	uri := resolver.Build(searchPath, values.Encode())
-	defer apply(ctx, &newCtx, access.NewRequest(h, http.MethodGet, uri), &resp, googleControllerName, access.StatusCode(&status))()
-	resp, status = exchange.Get(newCtx, uri, newHeader)
+	//defer apply(ctx, &newCtx, access.NewRequest(h, http.MethodGet, uri), &resp, googleControllerName, access.StatusCode(&status))()
+	resp, status := exchange.Get(ctx, uri, newHeader)
 	if !status.OK() {
 		return nil, nil, e.Handle(status, runtime.RequestId(h))
 	}
