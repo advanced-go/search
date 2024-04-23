@@ -2,7 +2,8 @@ package provider
 
 import (
 	"fmt"
-	"github.com/advanced-go/core/messaging"
+	"github.com/advanced-go/stdlib/core"
+	"github.com/advanced-go/stdlib/messaging"
 	"net/http"
 	"time"
 )
@@ -25,10 +26,10 @@ func messageHandler(msg *messaging.Message) {
 	switch msg.Event() {
 	case messaging.StartupEvent:
 		// Any processing for a Startup event would be here
-		messaging.SendReply(msg, messaging.NewStatusDuration(http.StatusOK, time.Since(start)))
+		messaging.SendReply(msg, core.NewStatusDuration(http.StatusOK, time.Since(start)))
 	case messaging.ShutdownEvent:
 	case messaging.PingEvent:
 		// Any processing for a Ping event would be here
-		messaging.SendReply(msg, messaging.NewStatusDuration(http.StatusOK, time.Since(start)))
+		messaging.SendReply(msg, core.NewStatusDuration(http.StatusOK, time.Since(start)))
 	}
 }

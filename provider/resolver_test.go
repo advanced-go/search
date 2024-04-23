@@ -2,7 +2,7 @@ package provider
 
 import (
 	"fmt"
-	uri2 "github.com/advanced-go/core/uri"
+	"github.com/advanced-go/stdlib/uri"
 	"net/url"
 )
 
@@ -28,18 +28,18 @@ func ExampleBuild_Override() {
 	v := make(url.Values)
 	v.Add(queryArg, "golang")
 
-	uri := resolver.Build(searchPath, v.Encode())
-	fmt.Printf("test: resolver.Build(\"%v\") -> [uri:%v]\n", searchPath, uri)
+	uri1 := resolver.Build(searchPath, v.Encode())
+	fmt.Printf("test: resolver.Build(\"%v\") -> [uri:%v]\n", searchPath, uri1)
 
-	resolver.SetTemplates([]uri2.Pair{{searchPath, "https://www.google.com/search?q=Pascal"}})
+	resolver.SetTemplates([]uri.Attr{{searchPath, "https://www.google.com/search?q=Pascal"}})
 	s := v.Encode()
-	uri = resolver.Build(searchPath, s)
-	fmt.Printf("test: resolver.Build(\"%v\") -> [uri:%v]\n", searchPath, uri)
+	uri1 = resolver.Build(searchPath, s)
+	fmt.Printf("test: resolver.Build(\"%v\") -> [uri:%v]\n", searchPath, uri1)
 
-	resolver.SetTemplates([]uri2.Pair{{searchPath, "file://[cwd]/providertest/resource/query-result.txt"}})
+	resolver.SetTemplates([]uri.Attr{{searchPath, "file://[cwd]/providertest/resource/query-result.txt"}})
 	s = v.Encode()
-	uri = resolver.Build(searchPath, s)
-	fmt.Printf("test: resolver.Build(\"%v\") -> [uri:%v]\n", searchPath, uri)
+	uri1 = resolver.Build(searchPath, s)
+	fmt.Printf("test: resolver.Build(\"%v\") -> [uri:%v]\n", searchPath, uri1)
 
 	//Output:
 	//test: resolver.Build("/search?%v") -> [uri:https://www.google.com/search?q=golang]

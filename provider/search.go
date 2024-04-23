@@ -2,37 +2,37 @@ package provider
 
 import (
 	"context"
-	"github.com/advanced-go/core/exchange"
-	"github.com/advanced-go/core/io2"
-	"github.com/advanced-go/core/runtime"
+	"github.com/advanced-go/stdlib/core"
+	"github.com/advanced-go/stdlib/httpx"
+	"github.com/advanced-go/stdlib/io"
 	"net/http"
 	"net/url"
 )
 
-func search[E runtime.ErrorHandler](ctx context.Context, h http.Header, values url.Values) ([]byte, http.Header, *runtime.Status) {
+func search[E core.ErrorHandler](ctx context.Context, h http.Header, values url.Values) ([]byte, http.Header, *core.Status) {
 	if values == nil {
-		return nil, nil, runtime.NewStatus(http.StatusBadRequest)
+		return nil, nil, core.NewStatus(http.StatusBadRequest)
 	}
 	var e E
 
 	newHeader := make(http.Header)
 	if h != nil {
-		accept := h.Get(io2.AcceptEncoding)
+		accept := h.Get(io.AcceptEncoding)
 		if len(accept) > 0 {
-			newHeader.Add(io2.AcceptEncoding, accept)
+			newHeader.Add(io.AcceptEncoding, accept)
 		}
 	}
 	uri := resolver.Build(searchPath, values.Encode())
-	resp, status := exchange.Get(ctx, uri, newHeader)
+	resp, status := httpx.Get(ctx, uri, newHeader)
 	if !status.OK() {
 		if status.Code != http.StatusGatewayTimeout {
-			e.Handle(status, runtime.RequestId(h))
+			e.Handle(status, httpx.RequestId(h))
 		}
 		return nil, nil, status
 	}
-	buf, status1 := io2.ReadAll(resp.Body, h)
+	buf, status1 := io.ReadAll(resp.Body, h)
 	if !status1.OK() {
-		return nil, nil, e.Handle(status1, runtime.RequestId(h))
+		return nil, nil, e.Handle(status1, httpx.RequestId(h))
 	}
 	resp.ContentLength = int64(len(buf))
 	return buf, resp.Header, status1

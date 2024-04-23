@@ -1,7 +1,7 @@
 package provider
 
 import (
-	uri2 "github.com/advanced-go/core/uri"
+	"github.com/advanced-go/stdlib/uri"
 )
 
 // http://localhost:8080/search?q=golang
@@ -16,9 +16,9 @@ const (
 )
 
 var (
-	resolver = uri2.NewResolver()
+	resolver = uri.NewResolver()
 )
 
 func init() {
-	resolver.SetTemplates([]uri2.Pair{{searchPath, "https://www.google.com/search?%v"}})
+	resolver.SetTemplates([]uri.Attr{{searchPath, "https://www.google.com/search?%v"}})
 }

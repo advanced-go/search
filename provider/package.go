@@ -3,8 +3,8 @@ package provider
 import (
 	"errors"
 	"fmt"
-	"github.com/advanced-go/core/http2"
-	"github.com/advanced-go/core/runtime"
+	"github.com/advanced-go/stdlib/core"
+	"github.com/advanced-go/stdlib/httpx"
 	"net/http"
 	"strings"
 )
@@ -13,24 +13,24 @@ const (
 	PkgPath = "github/advanced-go/search/provider"
 )
 
-// HttpHandler - HTTP handler endpoint
-func HttpHandler(w http.ResponseWriter, r *http.Request) {
-	path, status0 := http2.ValidateRequest(r, PkgPath)
+// HttpExchange - Process an HTTP exchange
+func HttpExchange(w http.ResponseWriter, r *http.Request) {
+	path, status0 := httpx.ValidateRequest(r, PkgPath)
 	if !status0.OK() {
-		http2.WriteResponse[runtime.Log](w, status0.Error(), status0, nil)
+		httpx.WriteResponse[core.Log](w, status0.Err, status0, nil)
 		return
 	}
-	runtime.AddRequestId(r)
+	httpx.AddRequestId(r)
 	switch strings.ToLower(path) {
 	case searchResource:
-		buf, h, status := search[runtime.Log](r.Context(), r.Header, r.URL.Query())
+		buf, h, status := search[core.Log](r.Context(), r.Header, r.URL.Query())
 		if !status.OK() {
-			http2.WriteResponse[runtime.Log](w, nil, status, nil)
+			httpx.WriteResponse[core.Log](w, nil, status, nil)
 		} else {
-			http2.WriteResponse[runtime.Log](w, buf, status, h)
+			httpx.WriteResponse[core.Log](w, buf, status, h)
 		}
 	default:
-		status := runtime.NewStatusError(http.StatusNotFound, errors.New(fmt.Sprintf("error invalid URI, resource was not found: [%v]", path)))
-		http2.WriteResponse[runtime.Log](w, status.Error(), status, nil)
+		status := core.NewStatusError(http.StatusNotFound, errors.New(fmt.Sprintf("error invalid URI, resource was not found: [%v]", path)))
+		httpx.WriteResponse[core.Log](w, status.Err, status, nil)
 	}
 }
