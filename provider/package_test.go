@@ -29,18 +29,19 @@ func Example_PkgPath() {
 
 }
 
-func ExampleHttpHandler_Error() {
+func ExampleHttpExchange_Error() {
 	// Need to set overrides, the returned func will reset original values
 	defer resolver.SetTemplates([]uri.Attr{{searchPath, resultUri}})()
 
 	rec := httptest.NewRecorder()
 	HttpExchange(rec, nil)
-	fmt.Printf("test: HttpExchange() -> [status-code:%v]\n", rec.Result().StatusCode)
+	buf, _ := io.ReadAll(rec.Result().Body, nil)
+	fmt.Printf("test: HttpExchange() -> [status-code:%v] [content:%v]\n", rec.Result().StatusCode, string(buf))
 
 	req, _ := http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+"invalid-path"+":search?q=golang", nil)
 	rec = httptest.NewRecorder()
 	HttpExchange(rec, req)
-	buf, _ := io.ReadAll(rec.Result().Body, nil)
+	buf, _ = io.ReadAll(rec.Result().Body, nil)
 	fmt.Printf("test: HttpExchange() -> [status-code:%v] [content:%v]\n", rec.Result().StatusCode, string(buf))
 
 	req, _ = http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+PkgPath+":searchBad?q=golang", nil)
@@ -50,9 +51,9 @@ func ExampleHttpHandler_Error() {
 	fmt.Printf("test: HttpExchange() -> [status-code:%v] [content:%v]\n", rec.Result().StatusCode, string(buf))
 
 	//Output:
-	//test: HttpExchange() -> [status-code:500]
+	//test: HttpExchange() -> [status-code:500] [content:error: Request is nil]
 	//test: HttpExchange() -> [status-code:400] [content:error: invalid URI, NID does not match: "/invalid-path:search" "github/advanced-go/search/provider"]
-	//test: HttpExchange() -> [status-code:404] [content:error invalid URI, resource was not found: [searchBad]]
+	//test: HttpExchange() -> [status-code:404] [content:error invalid URI, resource not found: [searchBad]]
 
 }
 
