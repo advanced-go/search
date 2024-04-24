@@ -13,8 +13,8 @@ const (
 	PkgPath = "github/advanced-go/search/provider"
 )
 
-// HttpExchange - Process an HTTP exchange
-func HttpExchange(w http.ResponseWriter, r *http.Request) {
+// HttpHandler - Process an HTTP exchange
+func HttpHandler(w http.ResponseWriter, r *http.Request) {
 	path, status0 := httpx.ValidateRequest(r, PkgPath)
 	if !status0.OK() {
 		httpx.WriteResponse[core.Log](w, nil, status0.HttpCode(), status0.Err)
