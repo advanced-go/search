@@ -26,13 +26,13 @@ func search[E core.ErrorHandler](ctx context.Context, h http.Header, values url.
 	resp, status := httpx.Get(ctx, uri, newHeader)
 	if !status.OK() {
 		if status.Code != http.StatusGatewayTimeout {
-			e.Handle(status, httpx.RequestId(h))
+			e.Handle(status, core.RequestId(h))
 		}
 		return nil, nil, status
 	}
 	buf, status1 := io.ReadAll(resp.Body, h)
 	if !status1.OK() {
-		return nil, nil, e.Handle(status1, httpx.RequestId(h))
+		return nil, nil, e.Handle(status1, core.RequestId(h))
 	}
 	resp.ContentLength = int64(len(buf))
 	return buf, resp.Header, status1

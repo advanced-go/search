@@ -7,7 +7,7 @@ import (
 )
 
 func ExampleStartupPing() {
-	r, _ := http.NewRequest("", "github/advanced-go/search/provider:ping", nil)
+	r, _ := http.NewRequest("", PkgPath+":ping", nil)
 	status := messaging.Ping(nil, r.URL)
 
 	fmt.Printf("test: Ping() -> [status:%v]\n", status)
