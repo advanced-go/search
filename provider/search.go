@@ -1,39 +1,31 @@
 package provider
 
 import (
-	"context"
 	"github.com/advanced-go/stdlib/core"
 	"github.com/advanced-go/stdlib/httpx"
 	"github.com/advanced-go/stdlib/io"
 	"net/http"
-	"net/url"
 )
 
-func search[E core.ErrorHandler](ctx context.Context, h http.Header, values url.Values) ([]byte, http.Header, *core.Status) {
-	if values == nil {
-		return nil, nil, core.NewStatus(http.StatusBadRequest)
+func search[E core.ErrorHandler](r *http.Request) (*http.Response, *core.Status) {
+	if r == nil || r.URL.Query() == nil {
+		return nil, core.NewStatus(http.StatusBadRequest)
 	}
 	var e E
 
 	newHeader := make(http.Header)
-	if h != nil {
-		accept := h.Get(io.AcceptEncoding)
+	if r.Header != nil {
+		accept := r.Header.Get(io.AcceptEncoding)
 		if len(accept) > 0 {
 			newHeader.Add(io.AcceptEncoding, accept)
 		}
 	}
-	uri := resolver.Build(searchPath, values.Encode())
-	resp, status := httpx.Get(ctx, uri, newHeader)
+	uri := resolver.Build(searchPath, r.URL.Query().Encode())
+	resp, status := httpx.Get(r.Context(), uri, newHeader)
 	if !status.OK() {
 		if status.Code != http.StatusGatewayTimeout {
-			e.Handle(status, core.RequestId(h))
+			e.Handle(status, core.RequestId(r))
 		}
-		return nil, nil, status
 	}
-	buf, status1 := io.ReadAll(resp.Body, h)
-	if !status1.OK() {
-		return nil, nil, e.Handle(status1, core.RequestId(h))
-	}
-	resp.ContentLength = int64(len(buf))
-	return buf, resp.Header, status1
+	return resp, status
 }
