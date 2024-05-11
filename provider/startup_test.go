@@ -2,13 +2,11 @@ package provider
 
 import (
 	"fmt"
-	"github.com/advanced-go/stdlib/messaging"
-	"net/http"
+	"github.com/advanced-go/stdlib/host"
 )
 
 func ExampleStartupPing() {
-	r, _ := http.NewRequest("", PkgPath+":ping", nil)
-	status := messaging.Ping(nil, r.URL)
+	status := host.Ping(PkgPath)
 
 	fmt.Printf("test: Ping() -> [status:%v]\n", status)
 
