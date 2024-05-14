@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func search[E core.ErrorHandler](r *http.Request) (*http.Response, *core.Status) {
+func Search[E core.ErrorHandler](r *http.Request) (*http.Response, *core.Status) {
 	if r == nil || r.URL.Query() == nil {
 		return nil, core.NewStatus(http.StatusBadRequest)
 	}
