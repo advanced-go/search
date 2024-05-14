@@ -1,4 +1,4 @@
-package google
+package yahoo
 
 import (
 	"fmt"
@@ -18,7 +18,7 @@ func ExampleBuild() {
 	fmt.Printf("test: resolver.Build-Debug(\"%v\") -> [uri:%v]\n", searchPath, uri)
 
 	//Output:
-	//test: resolver.Build-Debug("/search?%v") -> [uri:https://www.google.com/search?q=golang]
+	//test: resolver.Build-Debug("/search?%v") -> [uri:https://search.yahoo.com/search?q=golang]
 
 }
 
@@ -31,7 +31,7 @@ func ExampleBuild_Override() {
 	uri1 := resolver.Build(searchPath, v.Encode())
 	fmt.Printf("test: resolver.Build(\"%v\") -> [uri:%v]\n", searchPath, uri1)
 
-	resolver.SetTemplates([]uri.Attr{{searchPath, "https://www.google.com/search?q=Pascal"}})
+	resolver.SetTemplates([]uri.Attr{{searchPath, "https://search.yahoo.com/search?q=Pascal"}})
 	s := v.Encode()
 	uri1 = resolver.Build(searchPath, s)
 	fmt.Printf("test: resolver.Build(\"%v\") -> [uri:%v]\n", searchPath, uri1)
@@ -42,8 +42,8 @@ func ExampleBuild_Override() {
 	fmt.Printf("test: resolver.Build(\"%v\") -> [uri:%v]\n", searchPath, uri1)
 
 	//Output:
-	//test: resolver.Build("/search?%v") -> [uri:https://www.google.com/search?q=golang]
-	//test: resolver.Build("/search?%v") -> [uri:https://www.google.com/search?q=Pascal]
+	//test: resolver.Build("/search?%v") -> [uri:https://search.yahoo.com/search?q=golang]
+	//test: resolver.Build("/search?%v") -> [uri:https://search.yahoo.com/search?q=Pascal]
 	//test: resolver.Build("/search?%v") -> [uri:file://[cwd]/yahootest/resource/query-result.txt]
 
 }
