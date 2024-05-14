@@ -9,10 +9,6 @@ import (
 	"strings"
 )
 
-const (
-	PkgPath = "github/advanced-go/search/provider"
-)
-
 // HttpHandler - Process an HTTP exchange
 func HttpHandler(w http.ResponseWriter, r *http.Request) {
 	_, path, status0 := httpx.ValidateRequestURL(r, PkgPath)

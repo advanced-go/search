@@ -20,7 +20,7 @@ func ExampleSearch_Success() {
 	if err != nil {
 		fmt.Printf("test: NewRequest() -> %v\n", err)
 	}
-	resp, status := search[core.Output](req)
+	resp, status := Search[core.Output](req)
 	buf, _ := io2.ReadAll(resp.Body, resp.Header)
 
 	fmt.Printf("test: Search(%v) -> [status:%v] [status-code:%v] [content:%v]\n", req.URL.String(), status, status.Code, len(buf) > 0)
@@ -38,7 +38,7 @@ func ExampleSearch_Deadline_Exceeded() {
 	if err != nil {
 		fmt.Printf("test: NewRequest() -> %v\n", err)
 	}
-	resp, status := search[core.Output](req)
+	resp, status := Search[core.Output](req)
 	buf, _ := io2.ReadAll(resp.Body, resp.Header)
 
 	fmt.Printf("test: Search(%v) -> [status:%v] [status-code:%v] [content:%v]\n", req.URL.String(), status, status.Code, len(buf))
@@ -50,7 +50,7 @@ func ExampleSearch_Deadline_Exceeded() {
 
 func ExampleSearch_Text() {
 	req, _ := http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+PkgPath+":search?q=golang", nil)
-	resp, status := search[core.Output](req)
+	resp, status := Search[core.Output](req)
 	buf, _ := io2.ReadAll(resp.Body, resp.Header)
 	ct := http.DetectContentType(buf)
 	fmt.Printf("test: Search-Text() -> [status-code:%v] [read-all:%v] [content-type:%v]\n", resp.StatusCode, status, ct)
@@ -64,7 +64,7 @@ func ExampleSearch_Gzip() {
 	req, _ := http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+PkgPath+":search?q=golang", nil)
 	req.Header.Add(io2.AcceptEncoding, io2.GzipEncoding)
 
-	resp, status := search[core.Output](req)
+	resp, status := Search[core.Output](req)
 	buf, _ := io.ReadAll(resp.Body)
 	ct := http.DetectContentType(buf)
 	fmt.Printf("test: Search-Gzip() -> [status-code:%v] [read-all:%v] [content-type:%v]\n", resp.StatusCode, status, ct)
