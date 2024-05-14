@@ -1,4 +1,4 @@
-package provider
+package google
 
 import (
 	"fmt"
@@ -7,6 +7,10 @@ import (
 	"github.com/advanced-go/stdlib/messaging"
 	"net/http"
 	"time"
+)
+
+const (
+	PkgPath = "github/advanced-go/search/google"
 )
 
 func init() {

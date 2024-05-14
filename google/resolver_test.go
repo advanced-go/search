@@ -1,4 +1,4 @@
-package provider
+package google
 
 import (
 	"fmt"
@@ -36,7 +36,7 @@ func ExampleBuild_Override() {
 	uri1 = resolver.Build(searchPath, s)
 	fmt.Printf("test: resolver.Build(\"%v\") -> [uri:%v]\n", searchPath, uri1)
 
-	resolver.SetTemplates([]uri.Attr{{searchPath, "file://[cwd]/providertest/resource/query-result.txt"}})
+	resolver.SetTemplates([]uri.Attr{{searchPath, "file://[cwd]/googletest/resource/query-result.txt"}})
 	s = v.Encode()
 	uri1 = resolver.Build(searchPath, s)
 	fmt.Printf("test: resolver.Build(\"%v\") -> [uri:%v]\n", searchPath, uri1)
@@ -44,6 +44,6 @@ func ExampleBuild_Override() {
 	//Output:
 	//test: resolver.Build("/search?%v") -> [uri:https://www.google.com/search?q=golang]
 	//test: resolver.Build("/search?%v") -> [uri:https://www.google.com/search?q=Pascal]
-	//test: resolver.Build("/search?%v") -> [uri:file://[cwd]/providertest/resource/query-result.txt]
+	//test: resolver.Build("/search?%v") -> [uri:file://[cwd]/googletest/resource/query-result.txt]
 
 }

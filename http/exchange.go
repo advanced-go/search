@@ -3,8 +3,8 @@ package http
 import (
 	"errors"
 	"fmt"
+	"github.com/advanced-go/search/google"
 	"github.com/advanced-go/search/module"
-	"github.com/advanced-go/search/provider"
 	"github.com/advanced-go/stdlib/core"
 	"github.com/advanced-go/stdlib/httpx"
 	"net/http"
@@ -24,11 +24,11 @@ func Exchange(r *http.Request) (*http.Response, *core.Status) {
 	core.AddRequestId(r)
 	switch strings.ToLower(path) {
 	case googleSearch:
-		return provider.Search[core.Log](r)
+		return google.Search[core.Log](r)
 	default:
 		status := core.NewStatusError(http.StatusNotFound, errors.New(fmt.Sprintf("error invalid URI, resource not found: [%v]", path)))
 		return httpx.NewErrorResponse(status), status
 	}
 
-	//return provider.HttpExchange(r)
+	//return google.HttpExchange(r)
 }

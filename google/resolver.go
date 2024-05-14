@@ -1,4 +1,4 @@
-package provider
+package google
 
 import (
 	"github.com/advanced-go/stdlib/uri"
@@ -11,8 +11,7 @@ import (
 // PROD  : https://duckduckgo.com/?q=Pascal
 
 const (
-	searchPath     = "/search?%v"
-	searchResource = "search"
+	searchPath = "/search?%v"
 )
 
 var (

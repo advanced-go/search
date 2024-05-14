@@ -1,4 +1,4 @@
-package provider
+package google
 
 import (
 	"github.com/advanced-go/stdlib/core"
