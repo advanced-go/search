@@ -20,7 +20,6 @@ func Exchange(r *http.Request) (*http.Response, *core.Status) {
 	if !status0.OK() {
 		return httpx.NewErrorResponse(status0), status0
 	}
-	//path := "search"
 	core.AddRequestId(r)
 	switch strings.ToLower(path) {
 	case googleSearch:
