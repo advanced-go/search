@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func ExampleExchang() {
+func ExampleExchange() {
 	var buf []byte
 
 	req, _ := http.NewRequest(http.MethodGet, "http://localhost:8080/github/advanced-go/search:google?q=golang", nil)
