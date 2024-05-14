@@ -11,7 +11,7 @@ import (
 
 // HttpExchange - Process an HTTP exchange
 func HttpExchange(r *http.Request) (*http.Response, *core.Status) {
-	path, status0 := httpx.ValidateRequest(r, PkgPath)
+	_, path, status0 := httpx.ValidateRequest(r, PkgPath)
 	if !status0.OK() {
 		return httpx.NewErrorResponse(status0), status0
 	}
