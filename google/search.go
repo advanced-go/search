@@ -13,17 +13,10 @@ func Search[E core.ErrorHandler](r *http.Request) (*http.Response, *core.Status)
 	}
 	var e E
 
-	newHeader := make(http.Header)
-	if r.Header != nil {
-		accept := r.Header.Get(io.AcceptEncoding)
-		if len(accept) > 0 {
-			newHeader.Add(io.AcceptEncoding, accept)
-		}
-	}
 	uri := resolver.Build(searchPath, r.URL.Query().Encode())
-	resp, status := httpx.Get(r.Context(), uri, newHeader)
+	resp, status := httpx.GetExchange(r.Context(), uri, httpx.Forward(nil, r.Header, io.AcceptEncoding))
 	if !status.OK() {
-		if status.Code != http.StatusGatewayTimeout {
+		if !status.Timeout() {
 			e.Handle(status, core.RequestId(r))
 		}
 	}
