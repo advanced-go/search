@@ -6,10 +6,12 @@ import (
 	"github.com/advanced-go/search/google"
 	"github.com/advanced-go/search/module"
 	"github.com/advanced-go/search/yahoo"
+	"github.com/advanced-go/stdlib/controller"
 	"github.com/advanced-go/stdlib/core"
 	"github.com/advanced-go/stdlib/httpx"
 	"net/http"
 	"strings"
+	"time"
 )
 
 // DEBUG : https://search.yahoo.com/search?p=golang
@@ -22,8 +24,14 @@ const (
 	yahooProvider  = "yahoo"
 )
 
+func Controllers() []*controller.Controller {
+	return []*controller.Controller{
+		controller.NewController("google-search", controller.NewPrimaryResource("www.google.com", time.Second*2, "", nil), nil),
+	}
+}
+
 func Exchange(r *http.Request) (*http.Response, *core.Status) {
-	_, path, status0 := httpx.ValidateRequestURL(r, module.Path)
+	_, path, status0 := httpx.ValidateRequestURL(r, module.Authority)
 	if !status0.OK() {
 		return httpx.NewErrorResponse(status0), status0
 	}
@@ -37,6 +45,4 @@ func Exchange(r *http.Request) (*http.Response, *core.Status) {
 		status := core.NewStatusError(http.StatusNotFound, errors.New(fmt.Sprintf("error invalid URI, resource not found: [%v]", path)))
 		return httpx.NewErrorResponse(status), status
 	}
-
-	//return google.HttpExchange(r)
 }
