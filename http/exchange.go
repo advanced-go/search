@@ -24,6 +24,10 @@ const (
 	yahooProvider  = "yahoo"
 )
 
+var (
+	versionResponse = httpx.NewResponse(core.StatusOK(), core.VersionContent(module.Version))
+)
+
 func Controllers() []*controller.Controller {
 	return []*controller.Controller{
 		controller.NewController("google-search", controller.NewPrimaryResource("www.google.com", time.Second*2, "", nil), nil),
@@ -42,6 +46,10 @@ func Exchange(r *http.Request) (*http.Response, *core.Status) {
 		return google.Search[core.Log](r)
 	case yahooProvider:
 		return yahoo.Search[core.Log](r)
+	case core.VersionPath:
+		return versionResponse, core.StatusOK()
+	case core.HealthReadinessPath, core.HealthLivenessPath:
+		return httpx.HealthResponseOK, core.StatusOK()
 	default:
 		status := core.NewStatusError(http.StatusNotFound, errors.New(fmt.Sprintf("error invalid URI, resource not found: [%v]", path)))
 		return httpx.NewErrorResponse(status), status

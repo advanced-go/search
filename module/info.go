@@ -2,5 +2,6 @@ package module
 
 const (
 	Authority = "github/advanced-go/search"
-	RouteName = "search"
+	Name      = "search"
+	Version   = "0.0.0"
 )
