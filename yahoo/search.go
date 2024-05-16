@@ -9,9 +9,9 @@ import (
 
 func Search[E core.ErrorHandler](r *http.Request) (*http.Response, *core.Status) {
 	if r == nil || r.URL.Query() == nil {
-		return nil, core.NewStatus(http.StatusBadRequest)
+		status := core.NewStatus(http.StatusBadRequest)
+		return httpx.NewErrorResponse(status), status
 	}
-
 	resp, status := httpx.GetExchange(r.Context(), resolver.Build(searchPath, r.URL.Query().Encode()), httpx.Forward(nil, r.Header, io.AcceptEncoding))
 	if !status.OK() {
 		if !status.Timeout() {

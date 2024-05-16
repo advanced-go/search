@@ -14,6 +14,15 @@ import (
 	"time"
 )
 
+func ExampleSearch_Error() {
+	resp, status := Search[core.Output](nil)
+	fmt.Printf("test: Search() -> [status:%v] [status-code:%v]\n", status, resp.StatusCode)
+
+	//Output:
+	//test: Search() -> [status:Bad Request] [status-code:400]
+
+}
+
 func ExampleSearch_Success() {
 	resolver.SetTemplates([]uri.Attr{{searchPath, "https://www.google.com/search?q=golang"}})
 	ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*5000)
