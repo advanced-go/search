@@ -25,7 +25,7 @@ func ExampleExchange_Invalid() {
 
 }
 
-func _ExampleExchange_Google() {
+func ExampleExchange_Google() {
 	var buf []byte
 
 	req, _ := http.NewRequest(http.MethodGet, "http://localhost:8080/github/advanced-go/search:google?q=golang", nil)
@@ -38,7 +38,7 @@ func _ExampleExchange_Google() {
 
 }
 
-func _ExampleExchange_Yahoo() {
+func ExampleExchange_Yahoo() {
 	var buf []byte
 
 	req, _ := http.NewRequest(http.MethodGet, "http://localhost:8080/github/advanced-go/search:yahoo?q=golang", nil)
