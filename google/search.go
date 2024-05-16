@@ -9,14 +9,12 @@ import (
 
 func Search[E core.ErrorHandler](r *http.Request) (*http.Response, *core.Status) {
 	if r == nil || r.URL.Query() == nil {
-		return nil, core.NewStatus(http.StatusBadRequest)
+		return &http.Response{StatusCode: http.StatusBadRequest}, core.NewStatus(http.StatusBadRequest)
 	}
-	var e E
-
-	uri := resolver.Build(searchPath, r.URL.Query().Encode())
-	resp, status := httpx.GetExchange(r.Context(), uri, httpx.Forward(nil, r.Header, io.AcceptEncoding))
+	resp, status := httpx.GetExchange(r.Context(), resolver.Build(searchPath, r.URL.Query().Encode()), httpx.Forward(nil, r.Header, io.AcceptEncoding))
 	if !status.OK() {
 		if !status.Timeout() {
+			var e E
 			e.Handle(status, core.RequestId(r))
 		}
 	}
