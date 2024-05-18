@@ -24,6 +24,8 @@ const (
 	yahooProvider  = "yahoo"
 )
 
+var authorityResponse = httpx.NewAuthorityResponse(module.Authority)
+
 // Controllers - authority controllers
 func Controllers() []*controller.Controller {
 	return []*controller.Controller{
@@ -44,8 +46,10 @@ func Exchange(r *http.Request) (*http.Response, *core.Status) {
 		return google.Search[core.Log](r)
 	case yahooProvider:
 		return yahoo.Search[core.Log](r)
-	case core.VersionPath, core.InfoPath:
-		return httpx.NewInfoResponse(module.Info()), core.StatusOK()
+	case core.VersionPath:
+		return httpx.NewVersionResponse(module.Version), core.StatusOK()
+	case core.AuthorityPath:
+		return authorityResponse, core.StatusOK()
 	case core.HealthReadinessPath, core.HealthLivenessPath:
 		return httpx.NewHealthResponseOK(), core.StatusOK()
 	default:

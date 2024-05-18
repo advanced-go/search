@@ -26,19 +26,33 @@ func ExampleExchange_Invalid() {
 
 }
 
-func ExampleExchange_Info() {
-	req, _ := http.NewRequest(http.MethodGet, core.InfoRootPath, nil)
+func ExampleExchange_Authority() {
+	req, _ := http.NewRequest(http.MethodGet, core.AuthorityRootPath, nil)
 	resp, status := Exchange(req)
-	fmt.Printf("test: Exchange(\"/%v\") -> [status:%v] [status-code:%v] [auth:%v] [vers:%v]\n", core.InfoPath, status, resp.StatusCode, resp.Header.Get(core.XAuthority), resp.Header.Get(core.XVersion))
+	fmt.Printf("test: Exchange(\"/authority\") -> [status:%v] [status-code:%v] [auth:%v]\n", status, resp.StatusCode, resp.Header.Get(core.XAuthority))
 
-	req, _ = http.NewRequest("", "http://locahhost:8081/github/advanced-go/search:version", nil)
-	resp, status = Exchange(req)
+	//Output:
+	//test: Exchange("/authority") -> [status:OK] [status-code:200] [auth:github/advanced-go/search]
+
+}
+
+func ExampleExchange_Version() {
+	req, _ := http.NewRequest("", "http://locahhost:8081/github/advanced-go/search:version", nil)
+	resp, status := Exchange(req)
 	buf, _ := io.ReadAll(resp.Body, nil)
 	fmt.Printf("test: Exchange(\"/version\") -> [status:%v] [status-code:%v] [content:%v]\n", status, resp.StatusCode, string(buf))
 
-	req, _ = http.NewRequest("", "http://locahhost:8081/github/advanced-go/search:health/readiness", nil)
-	resp, status = Exchange(req)
-	buf, _ = io.ReadAll(resp.Body, nil)
+	//Output:
+	//test: Exchange("/version") -> [status:OK] [status-code:200] [content:{
+	// "version": "1.1.1"
+	//  }]
+
+}
+
+func ExampleExchange_Health() {
+	req, _ := http.NewRequest("", "http://locahhost:8081/github/advanced-go/search:health/readiness", nil)
+	resp, status := Exchange(req)
+	buf, _ := io.ReadAll(resp.Body, nil)
 	fmt.Printf("test: Exchange(\"/health/readiness\") -> [status:%v] [status-code:%v] [content:%v]\n", status, resp.StatusCode, string(buf))
 
 	req, _ = http.NewRequest("", "http://locahhost:8081/github/advanced-go/search:health/liveness", nil)
@@ -47,14 +61,12 @@ func ExampleExchange_Info() {
 	fmt.Printf("test: Exchange(\"/health/liveness\") -> [status:%v] [status-code:%v] [content:%v]\n", status, resp.StatusCode, string(buf))
 
 	//Output:
-	//test: Exchange("/info") -> [status:OK] [status-code:200] [auth:github/advanced-go/search] [vers:1.1.1]
-	//test: Exchange("/version") -> [status:OK] [status-code:200] [content:{
-	// "authority": "github/advanced-go/search",
-	// "version": "1.1.1",
-	// "name": "search"
-	//  }]
-	//test: Exchange("/health/readiness") -> [status:OK] [status-code:200] [content:up]
-	//test: Exchange("/health/liveness") -> [status:OK] [status-code:200] [content:up]
+	//test: Exchange("/health/readiness") -> [status:OK] [status-code:200] [content:{
+	// "status": "up"
+	//}]
+	//test: Exchange("/health/liveness") -> [status:OK] [status-code:200] [content:{
+	// "status": "up"
+	//}]
 
 }
 
