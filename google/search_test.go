@@ -91,7 +91,7 @@ func ExampleSearch_Gzip() {
 }
 
 func ExampleSearch_Controller() {
-	ctrl := controller.NewController("google-search", controller.NewPrimaryResource("www.google.com", time.Second*2, "", nil), nil)
+	ctrl := controller.NewController("google-search", controller.NewPrimaryResource("www.google.com", "", time.Second*2, "", nil), nil)
 	req, err := http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+module.Authority+":google?q=golang", nil)
 	if err != nil {
 		fmt.Printf("test: NewRequest() -> %v\n", err)

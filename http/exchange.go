@@ -29,8 +29,8 @@ var authorityResponse = httpx.NewAuthorityResponse(module.Authority)
 // Controllers - authority controllers
 func Controllers() []*controller.Controller {
 	return []*controller.Controller{
-		controller.NewController("google-search", controller.NewPrimaryResource("www.google.com", time.Second*2, "", nil), nil),
-		controller.NewController("yahoo-search", controller.NewPrimaryResource("search.yahoo.com", time.Second*2, "", nil), nil),
+		controller.NewController("google-search", controller.NewPrimaryResource("www.google.com", "", time.Second*2, "", nil), nil),
+		controller.NewController("yahoo-search", controller.NewPrimaryResource("search.yahoo.com", "", time.Second*2, "", nil), nil),
 	}
 }
 
