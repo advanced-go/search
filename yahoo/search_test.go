@@ -30,7 +30,6 @@ func ExampleSearch_Success() {
 
 /*
 func ExampleSearch_Deadline_Exceeded() {
-	resolver.SetTemplates([]uri.Attr{{searchPath, "https://search.yahoo.com/search?q=golang"}})
 	ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*5)
 	defer cancel()
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, "http://localhost:8080"+"/"+module.Authority+":google?q=golang", nil)
@@ -82,7 +81,7 @@ func ExampleSearch_Gzip() {
 */
 
 func ExampleSearch_Controller_Deadline_Exceeded() {
-	ctrl := controller.NewController("yahoo-search", controller.NewPrimaryResource("search.yahoo.com", time.Millisecond*2, "", nil), nil)
+	ctrl := controller.NewController("yahoo-search", controller.NewPrimaryResource("search.yahoo.com", "", time.Millisecond*2, "", nil), nil)
 	req, err := http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+module.Authority+":yahoo?q=golang", nil)
 	if err != nil {
 		fmt.Printf("test: NewRequest() -> %v\n", err)

@@ -8,7 +8,6 @@ import (
 	"github.com/advanced-go/stdlib/controller"
 	"github.com/advanced-go/stdlib/core"
 	io2 "github.com/advanced-go/stdlib/io"
-	"github.com/advanced-go/stdlib/uri"
 	"io"
 	"net/http"
 	"time"
@@ -24,7 +23,6 @@ func ExampleSearch_Error() {
 }
 
 func ExampleSearch_Success() {
-	resolver.SetTemplates([]uri.Attr{{searchPath, "https://www.google.com/search?q=golang"}})
 	ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*5000)
 	defer cancel()
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, "http://localhost:8080"+"/"+module.Authority+":google?q=golang", nil)
@@ -42,7 +40,6 @@ func ExampleSearch_Success() {
 }
 
 func ExampleSearch_Deadline_Exceeded() {
-	resolver.SetTemplates([]uri.Attr{{searchPath, "https://www.google.com/search?q=golang"}})
 	ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*5)
 	defer cancel()
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, "http://localhost:8080"+"/"+module.Authority+":google?q=golang", nil)

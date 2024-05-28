@@ -9,10 +9,6 @@ import (
 	"time"
 )
 
-const (
-	PkgPath = "github/advanced-go/search/yahoo"
-)
-
 func init() {
 	a, err := host.RegisterControlAgent(PkgPath, messageHandler)
 	if err != nil {
