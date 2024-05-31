@@ -33,7 +33,7 @@ func Exchange(r *http.Request) (*http.Response, *core.Status) {
 		return httpx.NewResponse(status, status.Err), status
 	}
 	core.AddRequestId(r)
-	switch p.Path {
+	switch p.Resource {
 	case googleProvider:
 		return google.Search[core.Log](r)
 	case yahooProvider:
@@ -45,7 +45,7 @@ func Exchange(r *http.Request) (*http.Response, *core.Status) {
 	case core.HealthReadinessPath, core.HealthLivenessPath:
 		return httpx.NewHealthResponseOK(), core.StatusOK()
 	default:
-		status = core.NewStatusError(http.StatusNotFound, errors.New(fmt.Sprintf("error invalid URI, resource not found: [%v]", p.Path)))
+		status = core.NewStatusError(http.StatusNotFound, errors.New(fmt.Sprintf("error invalid URI, resource not found: [%v]", p.Resource)))
 		return httpx.NewResponse(status, status.Err), status
 	}
 }
