@@ -10,7 +10,7 @@ import (
 func Search[E core.ErrorHandler](r *http.Request) (*http.Response, *core.Status) {
 	if r == nil || r.URL.Query() == nil {
 		status := core.NewStatus(http.StatusBadRequest)
-		return httpx.NewErrorResponse(status), status
+		return httpx.NewResponse(status, status.Err), status
 	}
 	resp, status := httpx.GetExchange(r.Context(), buildURL(r.URL), httpx.Forward(nil, r.Header, io.AcceptEncoding))
 	if !status.OK() {

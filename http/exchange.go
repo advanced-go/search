@@ -6,12 +6,9 @@ import (
 	"github.com/advanced-go/search/google"
 	"github.com/advanced-go/search/module"
 	"github.com/advanced-go/search/yahoo"
-	"github.com/advanced-go/stdlib/controller"
 	"github.com/advanced-go/stdlib/core"
 	"github.com/advanced-go/stdlib/httpx"
 	"net/http"
-	"strings"
-	"time"
 )
 
 // DEBUG : https://search.yahoo.com/search?p=golang
@@ -26,22 +23,17 @@ const (
 
 var authorityResponse = httpx.NewAuthorityResponse(module.Authority)
 
-// Controllers - authority controllers
-func Controllers() []*controller.Controller {
-	return []*controller.Controller{
-		controller.NewController("google-search", controller.NewPrimaryResource("www.google.com", "", time.Second*2, "", nil), nil),
-		controller.NewController("yahoo-search", controller.NewPrimaryResource("search.yahoo.com", "", time.Second*2, "", nil), nil),
-	}
-}
-
 // Exchange - HTTP exchange function
 func Exchange(r *http.Request) (*http.Response, *core.Status) {
-	_, path, status := httpx.ValidateRequestURL(r, module.Authority)
+	if r == nil || r.URL == nil {
+		return &http.Response{StatusCode: http.StatusBadRequest}, core.StatusBadRequest()
+	}
+	p, status := httpx.ValidateURL(r.URL, module.Authority)
 	if !status.OK() {
-		return httpx.NewErrorResponse(status), status
+		return httpx.NewResponse(status, status.Err), status
 	}
 	core.AddRequestId(r)
-	switch strings.ToLower(path) {
+	switch p.Path {
 	case googleProvider:
 		return google.Search[core.Log](r)
 	case yahooProvider:
@@ -53,7 +45,7 @@ func Exchange(r *http.Request) (*http.Response, *core.Status) {
 	case core.HealthReadinessPath, core.HealthLivenessPath:
 		return httpx.NewHealthResponseOK(), core.StatusOK()
 	default:
-		status = core.NewStatusError(http.StatusNotFound, errors.New(fmt.Sprintf("error invalid URI, resource not found: [%v]", path)))
-		return httpx.NewErrorResponse(status), status
+		status = core.NewStatusError(http.StatusNotFound, errors.New(fmt.Sprintf("error invalid URI, resource not found: [%v]", p.Path)))
+		return httpx.NewResponse(status, status.Err), status
 	}
 }
