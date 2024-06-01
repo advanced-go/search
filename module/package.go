@@ -7,7 +7,7 @@ import (
 
 const (
 	Authority = "github/advanced-go/search"
-	Name      = "search"
+	RouteName = "search"
 	Version   = "1.1.1"
 )
 
