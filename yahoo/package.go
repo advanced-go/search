@@ -1,22 +1,12 @@
 package yahoo
 
 import (
-	"github.com/advanced-go/stdlib/controller"
 	"net/url"
-	"time"
 )
 
 const (
-	PkgPath              = "github/advanced-go/search/yahoo"
-	searchUri            = "https://search.yahoo.com/search"
-	searchControllerName = "yahoo-search"
-)
-
-// Controllers - egress traffic controllers
-var (
-	Controllers = []controller.Config{
-		{searchControllerName, "www.search.yahoo.com", "", "", time.Second * 2},
-	}
+	PkgPath   = "github/advanced-go/search/yahoo"
+	searchUri = "https://search.yahoo.com/search"
 )
 
 func buildURL(url *url.URL) string {
