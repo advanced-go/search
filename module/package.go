@@ -19,19 +19,19 @@ const (
 )
 
 const (
-	YahooControllerName  = "yahoo"
-	GoogleControllerName = "google"
+	YahooRouteName  = "yahoo-search"
+	GoogleRouteName = "google-search"
 )
 
-// config - egress traffic controllers configuration
+// Routes - egress traffic route configuration
 var (
-	config = []controller.Config{
-		{YahooControllerName, "www.search.yahoo.com", "", "", time.Second * 2},
-		{GoogleControllerName, "www.google.com", "", "", time.Second * 2},
+	Routes = []controller.Config{
+		{YahooRouteName, "www.search.yahoo.com", "", "", time.Second * 2},
+		{GoogleRouteName, "www.google.com", "", "", time.Second * 2},
 	}
 )
 
-// ControllerConfig - get the controller configuration
-func ControllerConfig(ctrlName string) (controller.Config, bool) {
-	return controller.GetConfig(ctrlName, config)
+// GetRoute - get the route configuration
+func GetRoute(routeName string) (controller.Config, bool) {
+	return controller.GetRoute(routeName, Routes)
 }
