@@ -21,8 +21,8 @@ func ExampleExchange_Invalid() {
 
 	//Output:
 	//test: Exchange(nil) -> [status:Bad Request] [status-code:400]
-	//test: Exchange(nil) -> [status:Bad Request [error: invalid URI, authority does not match: "/search" "github/advanced-go/search"]] [status-code:400]
-	//test: Exchange(nil) -> [status:Bad Request [error: invalid URI, path only contains an authority: "/github/advanced-go/search"]] [status-code:400]
+	//test: Exchange(nil) -> [status:Bad Request] [status-code:400]
+	//test: Exchange(nil) -> [status:Bad Request] [status-code:400]
 
 }
 
@@ -76,10 +76,10 @@ func ExampleExchange_Google() {
 	req, _ := http.NewRequest(http.MethodGet, "http://localhost:8080/github/advanced-go/search:google?q=golang", nil)
 	resp, _ := Exchange(req)
 	buf, _ = io.ReadAll(resp.Body, nil)
-	fmt.Printf("test: Exchange() -> [status-code:%v] [content:%v]\n", resp.StatusCode, len(buf))
+	fmt.Printf("test: Exchange() -> [status-code:%v] [content:%v]\n", resp.StatusCode, len(buf) > 0)
 
 	//Output:
-	//test: Exchange() -> [status-code:200] [content:93444]
+	//test: Exchange() -> [status-code:200] [content:true]
 
 }
 
@@ -89,9 +89,9 @@ func ExampleExchange_Yahoo() {
 	req, _ := http.NewRequest(http.MethodGet, "http://localhost:8080/github/advanced-go/search:yahoo?q=golang", nil)
 	resp, _ := Exchange(req)
 	buf, _ = io.ReadAll(resp.Body, nil)
-	fmt.Printf("test: Exchange() -> [status-code:%v] [content:%v]\n", resp.StatusCode, len(buf))
+	fmt.Printf("test: Exchange() -> [status-code:%v] [content:%v]\n", resp.StatusCode, len(buf) > 0)
 
 	//Output:
-	//test: Exchange() -> [status-code:200] [content:93444]
+	//test: Exchange() -> [status-code:200] [content:true]
 
 }

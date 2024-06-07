@@ -30,11 +30,11 @@ func Exchange(r *http.Request) (*http.Response, *core.Status) {
 	}
 	p, status := httpx.ValidateURL(r.URL, module.Authority)
 	if !status.OK() {
-		return httpx.NewResponse(status, status.Err), status
+		return httpx.NewResponse[core.Log](status.HttpCode(), nil, status.Err)
 	}
 	core.AddRequestId(r)
 	r.Header.Add(core.XAuthority, module.Authority)
-	switch p.Resource {
+	switch p.Path {
 	case googleProvider:
 		return google.Search[core.Log](r)
 	case yahooProvider:
@@ -47,6 +47,6 @@ func Exchange(r *http.Request) (*http.Response, *core.Status) {
 		return httpx.NewHealthResponseOK(), core.StatusOK()
 	default:
 		status = core.NewStatusError(http.StatusNotFound, errors.New(fmt.Sprintf("error invalid URI, resource not found: [%v]", p.Resource)))
-		return httpx.NewResponse(status, status.Err), status
+		return httpx.NewResponse[core.Log](status.HttpCode(), nil, status.Err)
 	}
 }
