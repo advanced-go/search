@@ -33,7 +33,7 @@ func Exchange(r *http.Request) (*http.Response, *core.Status) {
 		return httpx.NewResponse[core.Log](status.HttpCode(), nil, status.Err)
 	}
 	core.AddRequestId(r)
-	r.Header.Add(core.XAuthority, module.Authority)
+	//r.Header.Set(core.XAuthority, module.Authority)
 	switch p.Path {
 	case googleProvider:
 		return google.Search[core.Log](r)
