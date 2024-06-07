@@ -89,6 +89,7 @@ func ExampleSearch_Controller_Deadline_Exceeded() {
 	req.Header.Set(core.XRequestId, "123-45-6789")
 	req.Header.Set(core.XRelatesTo, "business-group")
 	req.Header.Set(io2.AcceptEncoding, io2.AcceptEncodingValue)
+	req.Header.Set(core.XAuthority, module.Authority)
 	err = controller.RegisterController(ctrl)
 	if err != nil {
 		fmt.Printf("test: RegisterController() -> [err:%v]\n", err)
