@@ -18,7 +18,7 @@ func Search[E core.ErrorHandler](r *http.Request) (*http.Response, *core.Status)
 	}
 	start := time.Now().UTC()
 	req, _ := http.NewRequestWithContext(r.Context(), http.MethodGet, uri.Resolve(searchHost, "", searchResource, r.URL.Query(), r.Header), nil)
-	req.Header.Add(core.XAuthority, module.Authority)
+	req.Header.Set(core.XFrom, module.Authority)
 	httpx.Forward(req.Header, r.Header, io.AcceptEncoding)
 	resp, status := httpx.DoExchange(req)
 	if !status.OK() {
@@ -27,6 +27,6 @@ func Search[E core.ErrorHandler](r *http.Request) (*http.Response, *core.Status)
 			e.Handle(status, core.RequestId(r))
 		}
 	}
-	access.LogEgress(start, time.Since(start), req, resp, module.GoogleRouteName, "", 0, 0, 0, "")
+	access.LogEgress(start, time.Since(start), req, resp, module.Authority, module.GoogleRouteName, "", 0, 0, 0, "")
 	return resp, status
 }
