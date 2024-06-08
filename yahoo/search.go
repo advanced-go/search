@@ -1,6 +1,7 @@
 package yahoo
 
 import (
+	"github.com/advanced-go/search/module"
 	"github.com/advanced-go/stdlib/core"
 	"github.com/advanced-go/stdlib/httpx"
 	"github.com/advanced-go/stdlib/io"
@@ -15,7 +16,7 @@ func Search[E core.ErrorHandler](r *http.Request) (*http.Response, *core.Status)
 	}
 	//start := time.Now().UTC()
 	req, _ := http.NewRequestWithContext(r.Context(), http.MethodGet, uri.Resolve(searchHost, "", searchResource, r.URL.Query(), r.Header), nil)
-	//req.Header.Set(core.XFrom, module.Authority)
+	req.Header.Set(core.XFrom, module.Authority)
 	httpx.Forward(nil, r.Header, io.AcceptEncoding)
 	resp, status := httpx.DoExchange(req)
 	if !status.OK() {
