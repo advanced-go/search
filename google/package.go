@@ -13,4 +13,11 @@ const (
 )
 
 // Route - egress traffic route configuration
-var Route = controller.Config{RouteName: RouteName, Host: searchHost, Authority: "", LivenessPath: "", Duration: time.Second * 2}
+func Route(routeName string) (*controller.Config, bool) {
+	switch routeName {
+	case RouteName:
+		return &controller.Config{RouteName: RouteName, Host: searchHost, Authority: "", LivenessPath: "", Duration: time.Second * 2}, true
+	default:
+		return nil, false
+	}
+}
