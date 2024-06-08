@@ -2,6 +2,6 @@ package yahoo
 
 const (
 	PkgPath        = "github/advanced-go/search/yahoo"
-	searchHost     = "search.yahoo.com"
+	searchHost     = "www.search.yahoo.com"
 	searchResource = "search"
 )
