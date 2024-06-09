@@ -15,8 +15,8 @@ const (
 
 var resolver = uri.NewResolver(nil)
 
-// Route - egress traffic route configuration
-func Route(routeName string) (*controller.Config, bool) {
+// EgressRoute - egress traffic route configuration
+func EgressRoute(routeName string) (*controller.Config, bool) {
 	switch routeName {
 	case RouteName:
 		return &controller.Config{RouteName: RouteName, Host: searchHost, Authority: "", LivenessPath: "", Duration: time.Second * 2}, true
