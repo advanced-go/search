@@ -2,6 +2,7 @@ package google
 
 import (
 	"github.com/advanced-go/stdlib/controller"
+	"github.com/advanced-go/stdlib/uri"
 	"time"
 )
 
@@ -11,6 +12,8 @@ const (
 	searchResource = "search"
 	RouteName      = "google-search"
 )
+
+var resolver = uri.NewResolver(nil)
 
 // Route - egress traffic route configuration
 func Route(routeName string) (*controller.Config, bool) {

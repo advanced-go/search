@@ -81,7 +81,7 @@ func ExampleSearch_Gzip() {
 */
 
 func ExampleSearch_Controller_Deadline_Exceeded() {
-	ctrl := controller.NewController("yahoo-search", controller.NewPrimaryResource("search.yahoo.com", "", time.Millisecond*2, "", nil), nil)
+	ctrl := controller.NewController("yahoo-search", controller.NewPrimaryResource(searchHost, "", time.Millisecond*2, "", nil), nil)
 	req, err := http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+module.Authority+":yahoo?q=golang", nil)
 	if err != nil {
 		fmt.Printf("test: NewRequest() -> %v\n", err)
