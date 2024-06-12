@@ -1,7 +1,7 @@
 package google
 
 import (
-	"github.com/advanced-go/stdlib/controller"
+	"github.com/advanced-go/stdlib/controller2"
 	"github.com/advanced-go/stdlib/uri"
 	"time"
 )
@@ -16,6 +16,6 @@ const (
 var resolver = uri.NewResolver(nil)
 
 // EgressRoute - egress traffic route configuration
-func EgressRoute() *controller.Config {
-	return &controller.Config{RouteName: routeName, Host: searchHost, Authority: "", LivenessPath: "", Duration: time.Second * 2}
+func EgressRoute() *controller2.Config {
+	return &controller2.Config{RouteName: routeName, Host: searchHost, Authority: "", Duration: time.Second * 2}
 }
