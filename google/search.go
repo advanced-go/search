@@ -16,7 +16,7 @@ func Search[E core.ErrorHandler](r *http.Request) (*http.Response, *core.Status)
 	req, _ := http.NewRequestWithContext(r.Context(), http.MethodGet, resolver.Url(searchHost, "", searchResource, r.URL.Query(), r.Header), nil)
 	req.Header.Set(core.XFrom, module.Authority)
 	httpx.Forward(req.Header, r.Header, io.AcceptEncoding)
-	resp, status := httpx.DoExchange(req)
+	resp, status := httpx.Exchange(req)
 	if !status.OK() {
 		if !status.Timeout() {
 			var e E
