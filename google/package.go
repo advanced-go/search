@@ -10,17 +10,12 @@ const (
 	PkgPath        = "github/advanced-go/search/google"
 	searchHost     = "www.google.com"
 	searchResource = "search"
-	RouteName      = "google-search"
+	routeName      = "google-search"
 )
 
 var resolver = uri.NewResolver(nil)
 
 // EgressRoute - egress traffic route configuration
-func EgressRoute(routeName string) (*controller.Config, bool) {
-	switch routeName {
-	case RouteName:
-		return &controller.Config{RouteName: RouteName, Host: searchHost, Authority: "", LivenessPath: "", Duration: time.Second * 2}, true
-	default:
-		return nil, false
-	}
+func EgressRoute() *controller.Config {
+	return &controller.Config{RouteName: routeName, Host: searchHost, Authority: "", LivenessPath: "", Duration: time.Second * 2}
 }
