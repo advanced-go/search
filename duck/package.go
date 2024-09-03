@@ -1,6 +1,6 @@
 package duck
 
 const (
-	searchHost     = "duckduckgo.com"
-	searchResource = "search"
+	searchHost = "duckduckgo.com"
+	searchPath = "search"
 )

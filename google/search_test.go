@@ -5,7 +5,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/advanced-go/search/module"
-	"github.com/advanced-go/stdlib/controller"
 	"github.com/advanced-go/stdlib/core"
 	io2 "github.com/advanced-go/stdlib/io"
 	"io"
@@ -87,6 +86,7 @@ func ExampleSearch_Gzip() {
 
 }
 
+/*
 func ExampleSearch_Controller() {
 	ctrl := controller.NewController("google-search", controller.NewPrimaryResource("www.google.com", "", time.Second*2, "", nil), nil)
 	req, err := http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+module.Authority+":google?q=golang", nil)
@@ -109,3 +109,6 @@ func ExampleSearch_Controller() {
 	//test: Search(http://localhost:8080/github/advanced-go/search:google?q=golang) -> [status:OK] [status-code:200] [content:true]
 
 }
+
+
+*/

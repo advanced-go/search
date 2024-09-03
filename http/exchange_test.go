@@ -2,9 +2,15 @@ package http
 
 import (
 	"fmt"
+	"github.com/advanced-go/search/google"
 	"github.com/advanced-go/stdlib/core"
 	"github.com/advanced-go/stdlib/io"
+	"github.com/advanced-go/stdlib/uri"
 	"net/http"
+)
+
+const (
+	getResp = "file://[cwd]/httptest/get-resp.txt"
 )
 
 func ExampleExchange_Invalid() {
@@ -80,6 +86,22 @@ func ExampleExchange_Google() {
 
 	//Output:
 	//test: Exchange() -> [status-code:200] [content:true]
+
+}
+
+func ExampleExchange_Google_Override() {
+	var buf []byte
+	query := "q=golang"
+
+	req, _ := http.NewRequest(http.MethodGet, "http://localhost:8080/github/advanced-go/search:google?q=golang", nil)
+	path := uri.BuildPath(google.SearchPath, query)
+	req.Header.Add(path, getResp)
+	resp, _ := Exchange(req)
+	buf, _ = io.ReadAll(resp.Body, nil)
+	fmt.Printf("test: Exchange() -> [status-code:%v] [content:%v] [buf:%v]\n", resp.StatusCode, len(buf) > 0, len(buf)) //string(buf))
+
+	//Output:
+	//test: Exchange() -> [status-code:200] [content:true] [buf:279]
 
 }
 
