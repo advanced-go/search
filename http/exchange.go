@@ -28,24 +28,32 @@ const (
 var authorityResponse = httpx.NewAuthorityResponse(module.Authority)
 
 // Exchange - HTTP exchange function
-func Exchange(r *http.Request) (*http.Response, *core.Status) {
+func Exchange(r *http.Request) (resp *http.Response, status *core.Status) {
 	if r == nil || r.URL == nil {
 		return &http.Response{StatusCode: http.StatusBadRequest}, core.StatusBadRequest()
 	}
-	p, status := httpx.ValidateURL(r.URL, module.Authority)
-	if !status.OK() {
-		return httpx.NewResponse[core.Log](status.HttpCode(), nil, status.Err)
+	p, status1 := httpx.ValidateURL(r.URL, module.Authority)
+	if !status1.OK() {
+		return httpx.NewResponse[core.Log](status1.HttpCode(), nil, status1.Err)
 	}
 	core.AddRequestId(r)
 	switch p.Path {
 	case googleProvider:
-		return google.Search[core.Log](r)
+		resp, status = google.Search[core.Log](r)
+		resp.Header.Add(core.XRoute, google.EgressRoute)
+		return
 	case yahooProvider:
-		return yahoo.Search[core.Log](r)
+		resp, status = yahoo.Search[core.Log](r)
+		resp.Header.Add(core.XRoute, yahoo.EgressRoute)
+		return
 	case bingProvider:
-		return bing.Search[core.Log](r)
+		resp, status = bing.Search[core.Log](r)
+		resp.Header.Add(core.XRoute, bing.EgressRoute)
+		return
 	case duckProvider:
-		return duck.Search[core.Log](r)
+		resp, status = duck.Search[core.Log](r)
+		resp.Header.Add(core.XRoute, duck.EgressRoute)
+		return
 	case core.VersionPath:
 		return httpx.NewVersionResponse(module.Version), core.StatusOK()
 	case core.AuthorityPath:

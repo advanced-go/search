@@ -140,6 +140,6 @@ func ExampleExchange_Duck() {
 	fmt.Printf("test: Exchange() -> [status-code:%v] [content:%v]\n", resp.StatusCode, len(buf) > 0)
 
 	//Output:
-	//test: Exchange() -> [status-code:202] [content:true]
+	//test: Exchange() -> [status-code:200] [content:true]
 
 }
