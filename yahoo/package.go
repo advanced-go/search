@@ -5,6 +5,8 @@ import (
 	"net/http"
 )
 
+// DEBUG : https://search.yahoo.com/search?p=golang
+
 const (
 	PkgPath     = "github/advanced-go/search/yahoo"
 	EgressRoute = "yahoo-search"

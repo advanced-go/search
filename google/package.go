@@ -5,6 +5,8 @@ import (
 	"net/http"
 )
 
+// STAGE : https://www.google.com/search?q=C%2B%2B
+
 const (
 	PkgPath     = "github/advanced-go/search/google"
 	SearchHost  = "www.google.com"

@@ -3,6 +3,8 @@ package http
 import (
 	"errors"
 	"fmt"
+	"github.com/advanced-go/search/bing"
+	"github.com/advanced-go/search/duck"
 	"github.com/advanced-go/search/google"
 	"github.com/advanced-go/search/module"
 	"github.com/advanced-go/search/yahoo"
@@ -19,6 +21,8 @@ import (
 const (
 	googleProvider = "google"
 	yahooProvider  = "yahoo"
+	bingProvider   = "bing"
+	duckProvider   = "duck"
 )
 
 var authorityResponse = httpx.NewAuthorityResponse(module.Authority)
@@ -38,6 +42,10 @@ func Exchange(r *http.Request) (*http.Response, *core.Status) {
 		return google.Search[core.Log](r)
 	case yahooProvider:
 		return yahoo.Search[core.Log](r)
+	case bingProvider:
+		return bing.Search[core.Log](r)
+	case duckProvider:
+		return duck.Search[core.Log](r)
 	case core.VersionPath:
 		return httpx.NewVersionResponse(module.Version), core.StatusOK()
 	case core.AuthorityPath:
