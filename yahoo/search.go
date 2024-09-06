@@ -18,7 +18,7 @@ func Search[E core.ErrorHandler](r *http.Request) (*http.Response, *core.Status)
 	if !status.OK() {
 		if !status.Timeout() {
 			var e E
-			e.Handle(status, core.RequestId(r))
+			e.Handle(status.WithRequestId(r))
 		}
 	}
 	return resp, status

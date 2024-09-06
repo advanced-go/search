@@ -14,11 +14,12 @@ func Search[E core.ErrorHandler](r *http.Request) (*http.Response, *core.Status)
 	}
 	req, _ := http.NewRequestWithContext(r.Context(), http.MethodGet, Url(SearchHost, SearchPath, r.URL.Query(), r.Header), nil)
 	httpx.Forward(req.Header, r.Header, io.AcceptEncoding)
+	req.Header.Set(io.ContentEncoding, io.GzipEncoding)
 	resp, status := httpx.Exchange(req)
 	if !status.OK() {
 		if !status.Timeout() {
 			var e E
-			e.Handle(status, core.RequestId(r))
+			e.Handle(status.WithRequestId(r))
 		}
 	}
 	return resp, status
