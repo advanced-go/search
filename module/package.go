@@ -1,9 +1,10 @@
 package module
 
 const (
-	Authority = "github/advanced-go/search"
-	RouteName = "search"
-	Version   = "1.1.1"
+	Authority    = "github/advanced-go/search"
+	RouteName    = "search"
+	Version      = "1.1.1"
+	VersionRoute = "version"
 )
 
 // Configuration keys used on startup for map values

@@ -55,7 +55,9 @@ func Exchange(r *http.Request) (resp *http.Response, status *core.Status) {
 		resp.Header.Add(core.XRoute, duck.EgressRoute)
 		return
 	case core.VersionPath:
-		return httpx.NewVersionResponse(module.Version), core.StatusOK()
+		resp, status = httpx.NewVersionResponse(module.Version), core.StatusOK()
+		resp.Header.Add(core.XRoute, module.VersionRoute)
+		return
 	case core.AuthorityPath:
 		return authorityResponse, core.StatusOK()
 	case core.HealthReadinessPath, core.HealthLivenessPath:
