@@ -40,19 +40,19 @@ func Exchange(r *http.Request) (resp *http.Response, status *core.Status) {
 	switch p.Path {
 	case googleProvider:
 		resp, status = google.Search[core.Log](r)
-		resp.Header.Add(core.XRoute, google.EgressRoute)
+		resp.Header.Add(core.XRoute, google.SearchRoute)
 		return
 	case yahooProvider:
 		resp, status = yahoo.Search[core.Log](r)
-		resp.Header.Add(core.XRoute, yahoo.EgressRoute)
+		resp.Header.Add(core.XRoute, yahoo.SearchRoute)
 		return
 	case bingProvider:
 		resp, status = bing.Search[core.Log](r)
-		resp.Header.Add(core.XRoute, bing.EgressRoute)
+		resp.Header.Add(core.XRoute, bing.SearchRoute)
 		return
 	case duckProvider:
 		resp, status = duck.Search[core.Log](r)
-		resp.Header.Add(core.XRoute, duck.EgressRoute)
+		resp.Header.Add(core.XRoute, duck.SearchRoute)
 		return
 	case core.VersionPath:
 		resp, status = httpx.NewVersionResponse(module.Version), core.StatusOK()

@@ -94,7 +94,7 @@ func ExampleExchange_Google_Override() {
 	query := "q=golang"
 
 	req, _ := http.NewRequest(http.MethodGet, "http://localhost:8080/github/advanced-go/search:google?q=golang", nil)
-	path := uri.BuildPath(google.SearchPath, query)
+	path := uri.BuildPath("", google.SearchPath, query)
 	req.Header.Add(path, getResp)
 	resp, _ := Exchange(req)
 	buf, _ = io.ReadAll(resp.Body, nil)
