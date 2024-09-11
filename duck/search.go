@@ -3,7 +3,6 @@ package duck
 import (
 	"github.com/advanced-go/stdlib/core"
 	"github.com/advanced-go/stdlib/httpx"
-	"github.com/advanced-go/stdlib/io"
 	"net/http"
 )
 
@@ -13,8 +12,8 @@ func Search[E core.ErrorHandler](r *http.Request) (*http.Response, *core.Status)
 		return httpx.NewResponse[E](status.HttpCode(), nil, status.Err)
 	}
 	req, _ := http.NewRequestWithContext(r.Context(), http.MethodGet, resolver.Url(SearchHost, "", SearchPath, r.URL.Query(), r.Header), nil)
-	httpx.Forward(req.Header, r.Header, io.AcceptEncoding)
-	req.Header.Set(io.ContentEncoding, io.GzipEncoding)
+	httpx.Forward(req.Header, r.Header) //, io.AcceptEncoding)
+	//req.Header.Set(io.ContentEncoding, io.GzipEncoding)
 	resp, status := httpx.Exchange(req)
 	if !status.OK() {
 		if !status.Timeout() {
