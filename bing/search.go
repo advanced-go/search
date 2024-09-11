@@ -12,7 +12,7 @@ func Search[E core.ErrorHandler](r *http.Request) (*http.Response, *core.Status)
 		status := core.NewStatus(http.StatusBadRequest)
 		return httpx.NewResponse[E](status.HttpCode(), nil, status.Err)
 	}
-	req, _ := http.NewRequestWithContext(r.Context(), http.MethodGet, Url(SearchHost, SearchPath, r.URL.Query(), r.Header), nil)
+	req, _ := http.NewRequestWithContext(r.Context(), http.MethodGet, resolver.Url(SearchHost, "", SearchPath, r.URL.Query(), r.Header), nil)
 	httpx.Forward(req.Header, r.Header, io.AcceptEncoding)
 	req.Header.Set(io.ContentEncoding, io.GzipEncoding)
 	resp, status := httpx.Exchange(req)
