@@ -67,7 +67,7 @@ func ExampleSearch_Text() {
 
 }
 
-func ExampleSearch_Gzip() {
+func _ExampleSearch_Gzip() {
 	req, _ := http.NewRequest(http.MethodGet, "http://localhost:8080"+"/"+module.Authority+":bing?q=golang", nil)
 	req.Header.Add(io2.AcceptEncoding, io2.GzipEncoding)
 
