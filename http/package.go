@@ -3,14 +3,22 @@ package http
 import (
 	"errors"
 	"fmt"
+	"github.com/advanced-go/common/core"
+	"github.com/advanced-go/common/httpx"
+	"github.com/advanced-go/common/uri"
 	"github.com/advanced-go/search/bing"
 	"github.com/advanced-go/search/duck"
 	"github.com/advanced-go/search/google"
 	"github.com/advanced-go/search/module"
 	"github.com/advanced-go/search/yahoo"
-	"github.com/advanced-go/stdlib/core"
-	"github.com/advanced-go/stdlib/httpx"
 	"net/http"
+)
+
+const (
+	healthLivenessPath  = "health/liveness"
+	healthReadinessPath = "health/readiness"
+	versionPath         = "version"
+	authorityPath       = "authority"
 )
 
 // DEBUG : https://search.yahoo.com/search?p=golang
@@ -25,16 +33,18 @@ const (
 	duckProvider   = "duck"
 )
 
-var authorityResponse = httpx.NewAuthorityResponse(module.Authority)
+var authorityResponse = NewAuthorityResponse(module.Authority)
 
 // Exchange - HTTP exchange function
 func Exchange(r *http.Request) (resp *http.Response, status *core.Status) {
 	if r == nil || r.URL == nil {
 		return &http.Response{StatusCode: http.StatusBadRequest}, core.StatusBadRequest()
 	}
-	p, status1 := httpx.ValidateURL(r.URL, module.Authority)
-	if !status1.OK() {
-		return httpx.NewResponse[core.Log](status1.HttpCode(), nil, status1.Err)
+	p, err := uri.ValidateURL(r.URL, module.Authority)
+	if err != nil {
+		status1 := core.NewStatusError(http.StatusBadRequest, err)
+		resp, _ = httpx.NewResponse(status1.HttpCode(), nil, status1.Err)
+		return resp, status1
 	}
 	core.AddRequestId(r)
 	switch p.Path {
@@ -54,16 +64,16 @@ func Exchange(r *http.Request) (resp *http.Response, status *core.Status) {
 		resp, status = duck.Search[core.Log](r)
 		resp.Header.Add(core.XRoute, duck.SearchRoute)
 		return
-	case core.VersionPath:
-		resp, status = httpx.NewVersionResponse(module.Version), core.StatusOK()
+	case versionPath:
+		resp, status = NewVersionResponse(module.Version), core.StatusOK()
 		resp.Header.Add(core.XRoute, module.VersionRoute)
 		return
-	case core.AuthorityPath:
+	case authorityPath:
 		return authorityResponse, core.StatusOK()
-	case core.HealthReadinessPath, core.HealthLivenessPath:
+	case healthReadinessPath, healthLivenessPath:
 		return httpx.NewHealthResponseOK(), core.StatusOK()
 	default:
 		status = core.NewStatusError(http.StatusNotFound, errors.New(fmt.Sprintf("error invalid URI, resource not found: [%v]", p.Resource)))
-		return httpx.NewResponse[core.Log](status.HttpCode(), nil, status.Err)
+		return httpx.NewResponse(status.HttpCode(), nil, status.Err)
 	}
 }

@@ -1,7 +1,7 @@
 package bing
 
 import (
-	"github.com/advanced-go/stdlib/uri"
+	"github.com/advanced-go/common/uri"
 )
 
 // TEST  : https://www.bing.com/search?q=C+Language

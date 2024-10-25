@@ -1,7 +1,7 @@
 package duck
 
 import (
-	"github.com/advanced-go/stdlib/uri"
+	"github.com/advanced-go/common/uri"
 )
 
 // PROD  : https://duckduckgo.com/?q=Pascal

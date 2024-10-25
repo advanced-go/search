@@ -1,7 +1,7 @@
 package google
 
 import (
-	"github.com/advanced-go/stdlib/uri"
+	"github.com/advanced-go/common/uri"
 )
 
 // STAGE : https://www.google.com/search?q=C%2B%2B

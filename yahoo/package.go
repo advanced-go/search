@@ -1,7 +1,7 @@
 package yahoo
 
 import (
-	"github.com/advanced-go/stdlib/uri"
+	"github.com/advanced-go/common/uri"
 )
 
 // DEBUG : https://search.yahoo.com/search?p=golang

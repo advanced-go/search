@@ -2,15 +2,15 @@ package http
 
 import (
 	"fmt"
+	"github.com/advanced-go/common/core"
+	"github.com/advanced-go/common/iox"
+	"github.com/advanced-go/common/uri"
 	"github.com/advanced-go/search/google"
-	"github.com/advanced-go/stdlib/core"
-	"github.com/advanced-go/stdlib/io"
-	"github.com/advanced-go/stdlib/uri"
 	"net/http"
 )
 
 const (
-	getResp = "file://[cwd]/httptest/get-resp.txt"
+	getResp = "file://[cwd]/resource/get-resp.txt"
 )
 
 func ExampleExchange_Invalid() {
@@ -27,13 +27,13 @@ func ExampleExchange_Invalid() {
 
 	//Output:
 	//test: Exchange(nil) -> [status:Bad Request] [status-code:400]
-	//test: Exchange(nil) -> [status:Bad Request] [status-code:400]
-	//test: Exchange(nil) -> [status:Bad Request] [status-code:400]
+	//test: Exchange(nil) -> [status:Bad Request [error: invalid URI, authority does not match: "/search" "github/advanced-go/search"]] [status-code:400]
+	//test: Exchange(nil) -> [status:Bad Request [error: invalid URI, path only contains an authority: "/github/advanced-go/search"]] [status-code:400]
 
 }
 
 func ExampleExchange_Authority() {
-	req, _ := http.NewRequest(http.MethodGet, core.AuthorityRootPath, nil)
+	req, _ := http.NewRequest(http.MethodGet, uri.AuthorityRootPath, nil)
 	resp, status := Exchange(req)
 	fmt.Printf("test: Exchange(\"/authority\") -> [status:%v] [status-code:%v] [auth:%v]\n", status, resp.StatusCode, resp.Header.Get(core.XAuthority))
 
@@ -45,7 +45,7 @@ func ExampleExchange_Authority() {
 func _ExampleExchange_Version() {
 	req, _ := http.NewRequest("", "http://locahhost:8081/github/advanced-go/search:version", nil)
 	resp, status := Exchange(req)
-	buf, _ := io.ReadAll(resp.Body, nil)
+	buf, _ := iox.ReadAll(resp.Body, nil)
 	fmt.Printf("test: Exchange(\"/version\") -> [status:%v] [status-code:%v] [content:%v]\n", status, resp.StatusCode, string(buf))
 
 	//Output:
@@ -58,12 +58,12 @@ func _ExampleExchange_Version() {
 func _ExampleExchange_Health() {
 	req, _ := http.NewRequest("", "http://locahhost:8081/github/advanced-go/search:health/readiness", nil)
 	resp, status := Exchange(req)
-	buf, _ := io.ReadAll(resp.Body, nil)
+	buf, _ := iox.ReadAll(resp.Body, nil)
 	fmt.Printf("test: Exchange(\"/health/readiness\") -> [status:%v] [status-code:%v] [content:%v]\n", status, resp.StatusCode, string(buf))
 
 	req, _ = http.NewRequest("", "http://locahhost:8081/github/advanced-go/search:health/liveness", nil)
 	resp, status = Exchange(req)
-	buf, _ = io.ReadAll(resp.Body, nil)
+	buf, _ = iox.ReadAll(resp.Body, nil)
 	fmt.Printf("test: Exchange(\"/health/liveness\") -> [status:%v] [status-code:%v] [content:%v]\n", status, resp.StatusCode, string(buf))
 
 	//Output:
@@ -81,7 +81,7 @@ func ExampleExchange_Google() {
 
 	req, _ := http.NewRequest(http.MethodGet, "http://localhost:8080/github/advanced-go/search:google?q=golang", nil)
 	resp, _ := Exchange(req)
-	buf, _ = io.ReadAll(resp.Body, nil)
+	buf, _ = iox.ReadAll(resp.Body, nil)
 	fmt.Printf("test: Exchange() -> [status-code:%v] [content:%v]\n", resp.StatusCode, len(buf) > 0)
 
 	//Output:
@@ -95,9 +95,9 @@ func ExampleExchange_Google_Override() {
 
 	req, _ := http.NewRequest(http.MethodGet, "http://localhost:8080/github/advanced-go/search:google?q=golang", nil)
 	path := uri.BuildPath("", google.SearchPath, query)
-	uri.AddResolverContentLocation(req.Header, path, getResp)
+	uri.AddResolverEntry(req.Header, path, getResp)
 	resp, _ := Exchange(req)
-	buf, _ = io.ReadAll(resp.Body, nil)
+	buf, _ = iox.ReadAll(resp.Body, nil)
 	fmt.Printf("test: Exchange() -> [status-code:%v] [content:%v] [buf:%v]\n", resp.StatusCode, len(buf) > 0, len(buf)) //string(buf))
 
 	//Output:
@@ -110,7 +110,7 @@ func ExampleExchange_Yahoo() {
 
 	req, _ := http.NewRequest(http.MethodGet, "http://localhost:8080/github/advanced-go/search:yahoo?q=golang", nil)
 	resp, _ := Exchange(req)
-	buf, _ = io.ReadAll(resp.Body, nil)
+	buf, _ = iox.ReadAll(resp.Body, nil)
 	fmt.Printf("test: Exchange() -> [status-code:%v] [content:%v]\n", resp.StatusCode, len(buf) > 0)
 
 	//Output:
@@ -123,7 +123,7 @@ func ExampleExchange_Bing() {
 
 	req, _ := http.NewRequest(http.MethodGet, "http://localhost:8080/github/advanced-go/search:bing?q=golang", nil)
 	resp, _ := Exchange(req)
-	buf, _ = io.ReadAll(resp.Body, nil)
+	buf, _ = iox.ReadAll(resp.Body, nil)
 	fmt.Printf("test: Exchange() -> [status-code:%v] [content:%v]\n", resp.StatusCode, len(buf) > 0)
 
 	//Output:
@@ -136,7 +136,7 @@ func ExampleExchange_Duck() {
 
 	req, _ := http.NewRequest(http.MethodGet, "http://localhost:8080/github/advanced-go/search:duck?q=golang", nil)
 	resp, _ := Exchange(req)
-	buf, _ = io.ReadAll(resp.Body, nil)
+	buf, _ = iox.ReadAll(resp.Body, nil)
 	fmt.Printf("test: Exchange() -> [status-code:%v] [content:%v]\n", resp.StatusCode, len(buf) > 0)
 
 	//Output:
